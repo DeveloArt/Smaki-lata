@@ -1,13 +1,13 @@
 import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "login" | "register" | "logout";
   size?: "sm" | "md" | "lg";
 }
 
 export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = "primary",
+  variant = "login",
   size = "md",
   className = "",
   ...props
@@ -15,9 +15,9 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = "rounded font-medium transition-colors";
 
   const variantStyles = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-    outline: "border border-gray-300 hover:bg-gray-100",
+    login: "bg-blue-600 text-white hover:bg-blue-700",
+    register: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+    logout: "bg-red-600 text-white hover:bg-red-700",
   };
 
   const sizeStyles = {

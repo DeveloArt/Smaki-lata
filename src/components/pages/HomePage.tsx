@@ -1,7 +1,8 @@
+"use client";
 import React from "react";
 import { MainLayout } from "../templates/MainLayout";
 import { Button } from "../atoms/Button";
-
+import { LoginForm } from "../molecules/LoginForm";
 export const HomePage: React.FC = () => {
   return (
     <MainLayout>
@@ -12,6 +13,7 @@ export const HomePage: React.FC = () => {
         <p className="text-xl text-gray-600 mb-8">
           Смачна їжа та гарна атмосфера для вас
         </p>
+        <LoginForm onSearch={() => {}} />
         <Button size="lg">Переглянути меню</Button>
       </section>
 

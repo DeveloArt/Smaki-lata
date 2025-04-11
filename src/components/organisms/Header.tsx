@@ -31,7 +31,8 @@ export const Header: React.FC<HeaderProps> = ({ onSearch }) => {
 
           <div className="flex items-center gap-4">
             <SearchForm onSearch={onSearch} />
-            <Button variant="outline">Увійти</Button>
+            <Button variant="login">Увійти</Button>
+            <Button variant="register">Зареєструватися</Button>
           </div>
         </div>
       </div>
