@@ -4,7 +4,7 @@ import { MainLayout } from "../templates/MainLayout";
 import { LoginForm } from "../molecules/LoginForm";
 export const HomePage: React.FC = () => {
   const handleSearch = (email: string, password: string) => {
-    console.log("email:", email, password);
+    console.log("data:", email, password);
   };
   return (
     <MainLayout>
