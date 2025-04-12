@@ -1,34 +1,34 @@
 "use client";
 import React from "react";
 import { Button } from "../atoms/Button";
+import { Input } from "../atoms/Input";
 
 interface LoginFormProps {
-  onSearch: (query: string) => void;
+  onSearch: (email: string, password: string) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSearch }) => {
-  const [query, setQuery] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(query);
+    onSearch(email, password);
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      <input
+      <Input
         type="email"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         placeholder={"email"}
-        className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <input
+      <Input
         type="password"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
         placeholder={"password"}
-        className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <Button type="submit">login</Button>
     </form>
