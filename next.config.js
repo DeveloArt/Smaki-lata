@@ -1,14 +1,14 @@
-const withPWA = require("next-pwa")({
-  dest: "public",
+const withPWA = require('next-pwa')({
+  dest: 'public',
   register: true,
   skipWaiting: true,
   disable: false,
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/.*\.(png|jpg|jpeg|svg|gif)$/,
-      handler: "CacheFirst",
+      handler: 'CacheFirst',
       options: {
-        cacheName: "images",
+        cacheName: 'images',
         expiration: {
           maxEntries: 60,
           maxAgeSeconds: 30 * 24 * 60 * 60,
@@ -16,12 +16,12 @@ const withPWA = require("next-pwa")({
       },
     },
   ],
-});
+})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-};
+}
 
-module.exports = withPWA(nextConfig);
+module.exports = withPWA(nextConfig) 
