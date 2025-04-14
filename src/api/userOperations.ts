@@ -7,10 +7,16 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "./firebaseConfig";
-
+type UserData = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  access: string;
+};
 export const fetchUserData = async (userId: string) => {
   const usersDocRef = doc(firestore, "users", userId);
-  const userData = (await getDoc(usersDocRef)).data() as any;
+  const userData = (await getDoc(usersDocRef)).data() as UserData;
+  console.log(userData);
   return userData;
 };
 
@@ -75,6 +81,7 @@ const checkForUser = () => {
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {
+        console.log(user);
         unsubscribe();
       },
       reject
@@ -89,11 +96,11 @@ export const getCurrentUserUid = () => {
       auth,
       (user) => {
         if (user) {
-          resolve(user.uid); // Resolve the promise with user.uid
+          resolve(user.uid);
         } else {
-          resolve(null); // Resolve with null if there's no user
+          resolve(null);
         }
-        unsubscribe(); // Unsubscribe from the listener
+        unsubscribe();
       },
       reject
     );
@@ -113,3 +120,13 @@ export const fetchCurrentUser = async () => {
     console.error("Error fetching user UID:", error);
   }
 };
+
+//
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const uid = user.uid;
+    console.log("User  UID: ", uid, "Logged in.");
+  } else {
+    console.log("User logged out.");
+  }
+});

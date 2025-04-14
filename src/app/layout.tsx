@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,25 +16,23 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Smaki Lata",
   description: "Letnie smaki w jednej aplikacji",
+};
+
+export const viewport: Viewport = {
   themeColor: "#facc15",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <meta name="theme-color" content="#facc15" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

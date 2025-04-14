@@ -5,7 +5,7 @@ interface IInputs {
   password: string;
 }
 interface LoginFormProps {
-  onSubmit: any;
+  onSubmit: (data: IInputs) => void;
 }
 
 export const SignInForm = ({ onSubmit }: LoginFormProps) => {
@@ -14,9 +14,17 @@ export const SignInForm = ({ onSubmit }: LoginFormProps) => {
     handleSubmit,
     register,
     formState: { isValid },
-  } = useForm<IInputs>();
+  } = useForm<IInputs>({
+    defaultValues: {
+      email: "smakilata@gmail.com",
+      password: "smakilata2025!",
+    },
+  });
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="fieldset w-xs bg-base-200 border border-base-300 p-4 rounded-box"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Controller
         name="email"
         control={control}
@@ -29,8 +37,12 @@ export const SignInForm = ({ onSubmit }: LoginFormProps) => {
         }}
         render={() => (
           <div>
-            <label>Email</label>
-            <input placeholder="email" {...register("email")} />
+            <label className="fieldset-label">Email</label>
+            <input
+              className="input"
+              placeholder="email"
+              {...register("email")}
+            />
           </div>
         )}
       />
@@ -42,12 +54,20 @@ export const SignInForm = ({ onSubmit }: LoginFormProps) => {
         }}
         render={() => (
           <div>
-            <label>Hasło</label>
-            <input placeholder="hasło" {...register("password")} />
+            <label className="fieldset-label">Hasło</label>
+            <input
+              className="input"
+              placeholder="hasło"
+              {...register("password")}
+            />
           </div>
         )}
       />
-      <button type="submit" disabled={!isValid}>
+      <button
+        className="btn btn-neutral mt-4"
+        type="submit"
+        disabled={!isValid}
+      >
         Zaloguj się
       </button>
     </form>
