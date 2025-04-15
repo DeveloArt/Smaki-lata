@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryClientParams } from "../../helpers/queryClientParams";
 import { MainLayout } from "../templates/MainLayout";
 import {
+  fetchCurrentUser,
   fetchUserData,
   getCurrentUserUid,
   logoutUser,
@@ -21,11 +22,13 @@ export const HomePage: React.FC = () => {
     },
     queryClientParams
   );
-
+  console.log("dataCurrentUser", dataCurrentUser);
   const handleLogout = async () => {
     try {
       await logoutUser();
       queryClient.setQueryData(["user"], null);
+      console.log("remove");
+
       router.push("/");
     } catch (error) {
       console.log("Error logout", error);
@@ -34,6 +37,8 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     getCurrentUserUid().then((user) => {
       if (typeof user === "string") {
+        console.log(user);
+
         setCurrentUserId(user);
       }
     });
@@ -49,6 +54,9 @@ export const HomePage: React.FC = () => {
         </div>
         <button className="btn" onClick={handleLogout}>
           Logout
+        </button>
+        <button className="btn" onClick={() => router.back()}>
+          go back
         </button>
       </section>
     </MainLayout>

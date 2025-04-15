@@ -21,27 +21,33 @@ interface IInputs {
 export const SignInPage: React.FC = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState<string | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-
+  // const [isLoading, setIsLoading] = useState(false);
+  // console.log(loginError, isLoggedIn);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+    }
+  }, []);
   const onSubmit: SubmitHandler<IInputs> = async ({ email, password }) => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       setLoginError(null);
       await signInWithEmail(email, password, setLoginError, setIsLoggedIn);
-      console.log(loginError);
-
       router.push("/home");
     } catch (error) {
+      console.log(loginError);
+
       console.error(
         "Помилка входу. Перевірте дані та спробуйте ще раз.",
         error
       );
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -86,8 +92,6 @@ export const SignInPage: React.FC = () => {
         console.error("Error getting current user:", error);
       });
   }, []);
-  console.log(isLoading);
-
   return (
     <MainLayout>
       <div className="flex justify-center items-center min-h-screen">

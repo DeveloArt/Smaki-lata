@@ -16,7 +16,6 @@ type UserData = {
 export const fetchUserData = async (userId: string) => {
   const usersDocRef = doc(firestore, "users", userId);
   const userData = (await getDoc(usersDocRef)).data() as UserData;
-  console.log(userData);
   return userData;
 };
 
@@ -81,7 +80,6 @@ const checkForUser = () => {
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {
-        console.log(user);
         unsubscribe();
       },
       reject
