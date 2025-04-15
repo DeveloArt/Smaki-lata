@@ -26,7 +26,6 @@ export const SignInPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>("");
   // const [isLoading, setIsLoading] = useState(false);
-  // console.log(loginError, isLoggedIn);
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedToken = localStorage.getItem("token");

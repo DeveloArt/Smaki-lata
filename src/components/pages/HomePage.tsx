@@ -27,8 +27,6 @@ export const HomePage: React.FC = () => {
     try {
       await logoutUser();
       queryClient.setQueryData(["user"], null);
-      console.log("remove");
-
       router.push("/");
     } catch (error) {
       console.log("Error logout", error);
