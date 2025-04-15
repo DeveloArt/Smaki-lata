@@ -8,12 +8,9 @@ interface MainLayoutProps {
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col">
       <Header />
-
       <main className="flex-1 container mx-auto px-4 py-8">{children}</main>
-
-      <footer className="bg-gray-100 py-8">FOOTER</footer>
     </div>
   );
 };
