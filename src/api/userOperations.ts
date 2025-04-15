@@ -14,8 +14,18 @@ type UserData = {
   access: string;
 };
 export const fetchUserData = async (userId: string) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
   const usersDocRef = doc(firestore, "users", userId);
-  const userData = (await getDoc(usersDocRef)).data() as UserData;
+  const userDoc = await getDoc(usersDocRef);
+
+  if (!userDoc.exists()) {
+    throw new Error("User not found");
+  }
+
+  const userData = userDoc.data() as UserData;
   return userData;
 };
 
@@ -37,7 +47,7 @@ export const signInWithEmail = (
           setLoginErrors("Invalid login or password");
           break;
         case "auth/wrong-password":
-          setLoginErrors("Invalid login or password");
+          setLoginErrors("Invalid password");
           break;
         case "auth/network-request-failed":
           setLoginErrors("Network connection issue during authentication");
