@@ -1,13 +1,13 @@
-import { AppProps } from "next/app";
-import "@/styles/globals.css";
+"use client";
+
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClientParams } from "@/helpers/queryClientParams";
 
-export default function App({ Component, pageProps }: AppProps) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClientParams}>
-      <Component {...pageProps} />
+      {children}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

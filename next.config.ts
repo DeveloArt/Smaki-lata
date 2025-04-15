@@ -1,15 +1,21 @@
+/** @type {import('next').NextConfig} */
+const nextPWA = require("next-pwa");
+
 const isDev = process.env.NODE_ENV === "development";
 
-const withPWA = require("next-pwa")({
+const withPWA = nextPWA({
   dest: "public",
-  disable: isDev, // Вимикає PWA у dev
+  disable: isDev,
   register: true,
   skipWaiting: true,
 });
 
 const nextConfig = {
   reactStrictMode: true,
-  // інші опції
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    return config;
+  },
 };
 
 module.exports = withPWA(nextConfig);

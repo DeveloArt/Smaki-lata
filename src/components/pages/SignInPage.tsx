@@ -37,7 +37,7 @@ export const SignInPage: React.FC = () => {
       // setIsLoading(true);
       setLoginError(null);
       await signInWithEmail(email, password, setLoginError, setIsLoggedIn);
-      router.push("/home");
+      router.push("/dashboard");
     } catch (error) {
       console.log(loginError);
 
@@ -50,12 +50,6 @@ export const SignInPage: React.FC = () => {
     }
   };
 
-  if (currentUserId) {
-    fetchUserData(currentUserId).then((data) =>
-      queryClient.setQueryData(["user"], data)
-    );
-  }
-
   const { data: dataCurrentUser } = useQuery(
     {
       queryKey: ["user"],
@@ -63,9 +57,21 @@ export const SignInPage: React.FC = () => {
     },
     queryClientParams
   );
-  if (dataCurrentUser && dataCurrentUser.access === "admin") {
-    router.push("/home");
-  }
+
+  useEffect(() => {
+    if (dataCurrentUser && dataCurrentUser.access === "admin") {
+      router.push("/dashboard");
+    }
+  }, [dataCurrentUser, router]);
+
+  useEffect(() => {
+    if (currentUserId) {
+      fetchUserData(currentUserId).then((data) =>
+        queryClient.setQueryData(["user"], data)
+      );
+    }
+  }, [currentUserId, queryClient]);
+
   useEffect(() => {
     if (isLoggedIn) {
       getCurrentUserUid()
