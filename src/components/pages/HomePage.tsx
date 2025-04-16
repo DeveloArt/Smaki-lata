@@ -1,40 +1,35 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryClientParams } from "../../helpers/queryClientParams";
-import { MainLayout } from "../templates/MainLayout";
-import {
-  fetchCurrentUser,
-  fetchUserData,
-  getCurrentUserUid,
-  logoutUser,
-} from "@/api/userOperations";
-import { useRouter } from "next/navigation";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryClientParams } from '../../helpers/queryClientParams';
+import { MainLayout } from '../templates/MainLayout';
+import { fetchUserData, getCurrentUserUid, logoutUser } from '@/api/userOperations';
+import { useRouter } from 'next/navigation';
 export const HomePage: React.FC = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [currentUserId, setCurrentUserId] = useState<string>('');
 
   const { data: dataCurrentUser } = useQuery(
     {
-      queryKey: ["user"],
+      queryKey: ['user'],
       queryFn: async () => await fetchUserData(currentUserId),
     },
     queryClientParams
   );
-  console.log("dataCurrentUser", dataCurrentUser);
+  console.log('dataCurrentUser', dataCurrentUser);
   const handleLogout = async () => {
     try {
       await logoutUser();
-      queryClient.setQueryData(["user"], null);
-      router.push("/");
+      queryClient.setQueryData(['user'], null);
+      router.push('/');
     } catch (error) {
-      console.log("Error logout", error);
+      console.log('Error logout', error);
     }
   };
   useEffect(() => {
-    getCurrentUserUid().then((user) => {
-      if (typeof user === "string") {
+    getCurrentUserUid().then(user => {
+      if (typeof user === 'string') {
         console.log(user);
 
         setCurrentUserId(user);
