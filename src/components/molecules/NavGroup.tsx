@@ -1,3 +1,5 @@
+"use client";
+import { logoutUser } from "@/api/userOperations";
 import { NavItem } from "../atoms/NavItem";
 import {
   FaHome,
@@ -8,8 +10,23 @@ import {
   FaSignOutAlt,
   FaChartBar,
 } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
-export const NavGroup: React.FC = () => (
+export const NavGroup: React.FC = () => {  
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      queryClient.setQueryData(["user"], null);
+      router.push("/");
+    } catch (error) {
+      console.log("Error logout", error);
+    }
+  };
+
+  return (
   <nav className="flex flex-col gap-2">
     <NavItem
       href="/dashboard"
@@ -45,6 +62,8 @@ export const NavGroup: React.FC = () => (
       href="/"
       icon={<FaSignOutAlt className="h-4 w-4" />}
       label="Wyloguj"
+      onClick={handleLogout}
     />
-  </nav>
-);
+    </nav>
+  );
+};
