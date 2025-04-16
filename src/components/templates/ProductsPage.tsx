@@ -1,35 +1,20 @@
-import { Button } from '../atoms/Button';
-import { ProductList } from '../organisms/ProductList';
 import Link from 'next/link';
+import { Button } from '../atoms/Button';
 import { IoMdAdd } from "react-icons/io";
-import { Breadcrumbs } from '../molecules/Breadcrumbs';
+import { ProductsPageClient } from '../organisms/ProductsPageClient';
 
-interface ProductsPageProps {
-  products: {
-    id: string;
-    name: string;
-    price: number;
-    unit: string;
-    quantity: number;
-  }[];
-}
-
-export const ProductsPage = ({ products }: ProductsPageProps) => {
+export default function ProductsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <Breadcrumbs />
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-primary">Nasze Owoce</h1>
-        <Link href="/products/add">
+      <div className="flex justify-end mb-8">
+        <Link href="/dashboard/products/add">
           <Button className="flex items-center gap-2">
             <IoMdAdd />
             Dodaj Produkt
           </Button>
         </Link>
       </div>
-      <div className="bg-base-100 rounded-lg shadow-lg">
-        <ProductList products={products} />
-      </div>
+      <ProductsPageClient />
     </div>
   );
-}; 
+}

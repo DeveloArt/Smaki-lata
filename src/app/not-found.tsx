@@ -11,7 +11,7 @@ export default function NotFound() {
             Przepraszamy, ale strona, której szukasz, nie istnieje lub została przeniesiona.
           </p>
           <div className="card-actions">
-            <Link href="/" className="btn btn-primary">
+            <Link href="/dashboard" className="btn btn-primary">
               Wróć do strony głównej
             </Link>
           </div>
