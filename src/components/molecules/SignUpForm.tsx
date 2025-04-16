@@ -1,6 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { REGEX_EMAIL } from '../../constants/REGEX';
 import { Button } from '../atoms/Button';
+import { Input } from '../atoms/Input';
 interface IInputs {
   email: string;
   firstName: string;
@@ -43,7 +44,7 @@ export const SignUpForm = ({ onSubmit }: LoginFormProps) => {
         render={() => (
           <div>
             <label className="fieldset-label">Email</label>
-            <input className="input w-full" placeholder="email" {...register('email')} />
+            <Input className="w-full" placeholder="email" {...register('email')} />
           </div>
         )}
       />
@@ -56,7 +57,7 @@ export const SignUpForm = ({ onSubmit }: LoginFormProps) => {
         render={() => (
           <div>
             <label className="fieldset-label">Imię</label>
-            <input className="input w-full" placeholder="imię" {...register('firstName')} />
+            <Input className="w-full" placeholder="imię" {...register('firstName')} />
           </div>
         )}
       />
@@ -67,7 +68,7 @@ export const SignUpForm = ({ onSubmit }: LoginFormProps) => {
         render={() => (
           <div>
             <label className="fieldset-label">Nazwisko</label>
-            <input className="input w-full" placeholder="nazwisko" {...register('lastName')} />
+            <Input className="w-full" placeholder="nazwisko" {...register('lastName')} />
           </div>
         )}
       />
@@ -78,11 +79,11 @@ export const SignUpForm = ({ onSubmit }: LoginFormProps) => {
         render={() => (
           <div>
             <label className="fieldset-label">Telefon</label>
-            <input className="input w-full" placeholder="telefon" {...register('telNumber')} />
+            <Input className="w-full" placeholder="telefon" {...register('telNumber')} />
           </div>
         )}
       />
-      <Button variant="add" type="submit" disabled={!isValid}>
+      <Button variant="add" type="submit" className="mt-4" disabled={!isValid}>
         Zarejestruj nowego pracownika
       </Button>
     </form>
