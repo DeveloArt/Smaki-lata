@@ -2,32 +2,40 @@
 
 import { ReactNode } from 'react'
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'danger' | 'login' | 'register' | 'logout'
-  icon?: ReactNode
-  onClick?: () => void
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
-export const Button = ({ children, variant = 'primary', icon, onClick, className = '' }: ButtonProps) => {
-  const baseStyles = 'inline-flex items-center px-4 py-2 rounded-lg transition-colors'
+export const Button = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  className = '',
+  ...props
+}: ButtonProps) => {
+  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
   
-  const variantStyles = {
-    primary: 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white',
-    secondary: 'bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/50 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400',
-    danger: 'bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white',
-    login: 'bg-blue-500 hover:bg-blue-600 text-white',
-    register: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
-    logout: 'bg-red-500 hover:bg-red-600 text-white'
+  const variants = {
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+    outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+    danger: 'bg-red-500 text-white hover:bg-red-600'
   }
-
+  
+  const sizes = {
+    sm: 'h-9 px-3 text-sm',
+    md: 'h-10 px-4 py-2',
+    lg: 'h-11 px-8 text-lg',
+  }
+  
   return (
-    <button 
-      onClick={onClick}
-      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+    <button
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      {...props}
     >
-      {icon && <span className="mr-2">{icon}</span>}
       {children}
     </button>
   )

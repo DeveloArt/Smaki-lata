@@ -16,34 +16,39 @@ const pathLabels: Record<string, string> = {
   'tables': 'Stoiska',
   'delivery': 'Dostawy',
   'reports': 'Raporty',
-  'add': 'Dodaj'
+  'add': 'Dodaj produkt'
 };
 
 export const Breadcrumbs = () => {
   const pathname = usePathname();
   const paths = pathname.split('/').filter(Boolean);
   const relevantPaths = paths.filter(path => path !== 'dashboard');
-  const isProductPage = relevantPaths[0] === 'products' && relevantPaths[1] && !relevantPaths[2];
-  
-  let breadcrumbs: BreadcrumbItem[];
-  
+  const isProductPage = relevantPaths[0] === 'products' && relevantPaths[1] && !relevantPaths[2] && !isNaN(Number(relevantPaths[1]));
+  const isAddProductPage = relevantPaths[0] === 'products' && relevantPaths[1] === 'add';
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { label: 'Strona główna', href: '/dashboard' }
+  ];
+
   if (isProductPage) {
     const productId = relevantPaths[1];
     const product = mockProducts.find(p => p.id === productId);
-    breadcrumbs = [
-      { label: 'Strona główna', href: '/dashboard' },
+    breadcrumbs.push(
       { label: 'Produkty', href: '/dashboard/products' },
       { label: product?.name || productId, href: `/dashboard/products/${productId}` }
-    ];
+    );
+  } else if (isAddProductPage) {
+    breadcrumbs.push(
+      { label: 'Produkty', href: '/dashboard/products' },
+      { label: 'Dodaj produkt', href: '/dashboard/products/add' }
+    );
   } else {
-    breadcrumbs = [
-      { label: 'Strona główna', href: '/dashboard' },
-      ...relevantPaths.map((path, index) => {
-        const href = `/dashboard/${relevantPaths.slice(0, index + 1).join('/')}`;
-        const label = pathLabels[path] || path.charAt(0).toUpperCase() + path.slice(1);
-        return { label, href };
-      })
-    ];
+    let currentPath = '/dashboard';
+    relevantPaths.forEach((path) => {
+      currentPath += `/${path}`;
+      const label = pathLabels[path] || path.charAt(0).toUpperCase() + path.slice(1);
+      breadcrumbs.push({ label, href: currentPath });
+    });
   }
 
   return (
@@ -62,4 +67,4 @@ export const Breadcrumbs = () => {
       ))}
     </nav>
   );
-}; 
+};
