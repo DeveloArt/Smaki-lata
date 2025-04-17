@@ -1,12 +1,14 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { queryClientParams } from '../../helpers/queryClientParams';
-import { MainLayout } from '../templates/MainLayout';
-import { fetchCurrentUser, fetchUserData, getCurrentUserUid } from '@/api/userOperations';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { queryClientParams } from "../../helpers/queryClientParams";
+import { MainLayout } from "../templates/MainLayout";
+import {
+  fetchUserData,
+  getCurrentUserUid,
+} from "@/api/userOperations";
 export const HomePage: React.FC = () => {
-  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<string>("");
   const { data: dataCurrentUser } = useQuery(
     {
       queryKey: ['user'],
@@ -20,7 +22,6 @@ export const HomePage: React.FC = () => {
     getCurrentUserUid().then(user => {
       if (typeof user === 'string') {
         console.log(user);
-
         setCurrentUserId(user);
       }
     });

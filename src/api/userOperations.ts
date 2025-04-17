@@ -81,7 +81,8 @@ const checkForUser = () => {
   return new Promise((_, reject) => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      user => {
+      (user) => {
+        console.log('user :', user);    
         unsubscribe();
       },
       reject

@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextPWA = require("next-pwa");
-
 const isDev = process.env.NODE_ENV === "development";
 
 const withPWA = nextPWA({
@@ -12,7 +11,9 @@ const withPWA = nextPWA({
 
 const nextConfig = {
   reactStrictMode: true,
-  webpack: (config) => {
+  webpack: (
+      // @ts-ignore
+    config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
