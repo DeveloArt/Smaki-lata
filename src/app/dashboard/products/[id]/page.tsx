@@ -8,8 +8,15 @@ import { getProductById } from '@/api/productsOperations'
 import { SalesChart } from '@/components/organisms/SalesChart'
 import { getProductStalls } from '@/helpers/productStallsHelpers'
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const id = params.id
+interface PageParams {
+  params: Promise<{
+    id: string
+  }>
+}
+
+export default async function ProductPage({ params }: PageParams) {
+  const resolvedParams = await params
+  const id = resolvedParams.id
   const product = await getProductById(id)
 
   if (!product) {

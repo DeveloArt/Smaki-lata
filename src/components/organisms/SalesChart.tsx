@@ -2,7 +2,6 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-// Przykładowe dane - w rzeczywistości powinny pochodzić z API
 const salesData = [
   { name: 'Styczeń', sprzedane: 400, niesprzedane: 100 },
   { name: 'Luty', sprzedane: 300, niesprzedane: 200 },

@@ -2,13 +2,14 @@ import { ProductForm } from '@/components/organisms/ProductForm'
 import { getProductById } from '@/api/productsOperations'
 
 interface PageParams {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditProductPage({ params }: PageParams) {
-  const productId = params.id
+  const resolvedParams = await params
+  const productId = resolvedParams.id
   const product = await getProductById(productId)
 
   if (!product) {
