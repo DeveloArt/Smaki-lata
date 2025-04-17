@@ -161,29 +161,32 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
           </div>
         </td>
       </tr>
-
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-[100]">
-          <Modal
-            isOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-            title="Usuń produkt"
-            isDanger={true}
-            confirmText={isDeleting ? "Usuwanie..." : "Usuń"}
-            onConfirm={handleDeleteConfirm}
-          >
-            <div className="p-4">
-              {error && (
-                <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg" role="alert">
-                  {error}
+        <tr>
+          <td colSpan={4} className="p-0">
+            <div className="fixed inset-0 z-[100]">
+              <Modal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                title="Usuń produkt"
+                isDanger={true}
+                confirmText={isDeleting ? "Usuwanie..." : "Usuń"}
+                onConfirm={handleDeleteConfirm}
+              >
+                <div className="p-4">
+                  {error && (
+                    <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg" role="alert">
+                      {error}
+                    </div>
+                  )}
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Czy na pewno chcesz usunąć produkt &quot;{product.name}&quot;? Tej operacji nie można cofnąć.
+                  </p>
                 </div>
-              )}
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Czy na pewno chcesz usunąć produkt &quot;{product.name}&quot;? Tej operacji nie można cofnąć.
-              </p>
+              </Modal>
             </div>
-          </Modal>
-        </div>
+          </td>
+        </tr>
       )}
     </>
   );
