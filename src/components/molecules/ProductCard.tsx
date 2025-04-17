@@ -64,12 +64,15 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
     }
   }, [product.id, router]);
 
-  const handleRowClick = useCallback((e: React.MouseEvent) => {
-    if (menuRef.current?.contains(e.target as Node)) {
-      return;
-    }
-    router.push(`/dashboard/products/${product.id}`);
-  }, [product.id, router]);
+  const handleRowClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (menuRef.current?.contains(e.target as Node)) {
+        return;
+      }
+      router.push(`/dashboard/products/${product.id}`);
+    },
+    [product.id, router]
+  );
 
   const toggleMenu = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -86,18 +89,17 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
     return null;
   }
 
-  const stallsText = stalls.length > 0 
-    ? stalls.map(stall => stall.stallId).join(', ') 
-    : 'Brak stoisk';
+  const stallsText =
+    stalls.length > 0 ? stalls.map(stall => stall.stallId).join(', ') : 'Brak stoisk';
 
   return (
     <>
-      <tr 
-        className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200" 
+      <tr
+        className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
         onClick={handleRowClick}
         role="row"
         tabIndex={0}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             router.push(`/dashboard/products/${product.id}`);
@@ -105,34 +107,32 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
         }}
       >
         <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
-            {product.name}
-          </div>
+          <div className="text-sm font-medium text-gray-900 dark:text-white">{product.name}</div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-center">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {product.category}
-          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{product.category}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">{product.unit}</div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {stallsText}
-          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{stallsText}</div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-right">
           <div className="relative inline-block" ref={menuRef}>
             <Button
               size="sm"
+              variant="add"
               onClick={toggleMenu}
               className="p-2 hover:bg-primary-100 dark:hover:bg-primary-900"
               aria-label="Opcje produktu"
               aria-expanded={isMenuOpen}
               aria-haspopup="true"
             >
-              <BsThreeDots className="w-5 h-5" />
+              <BsThreeDots className="w-5 h-5 " />
             </Button>
             {isMenuOpen && (
-              <div 
+              <div
                 className="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[9999]"
                 role="menu"
                 aria-orientation="vertical"
@@ -143,7 +143,7 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
                     href={`/dashboard/products/${product.id}/edit`}
                     className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                     role="menuitem"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={e => e.stopPropagation()}
                   >
                     Edytuj
                   </Link>
@@ -170,7 +170,7 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
                 onClose={() => setIsDeleteModalOpen(false)}
                 title="Usuń produkt"
                 isDanger={true}
-                confirmText={isDeleting ? "Usuwanie..." : "Usuń"}
+                confirmText={isDeleting ? 'Usuwanie...' : 'Usuń'}
                 onConfirm={handleDeleteConfirm}
               >
                 <div className="p-4">
@@ -180,7 +180,8 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
                     </div>
                   )}
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Czy na pewno chcesz usunąć produkt &quot;{product.name}&quot;? Tej operacji nie można cofnąć.
+                    Czy na pewno chcesz usunąć produkt &quot;{product.name}&quot;? Tej operacji nie
+                    można cofnąć.
                   </p>
                 </div>
               </Modal>
@@ -192,4 +193,4 @@ export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
   );
 });
 
-ProductCard.displayName = 'ProductCard'; 
+ProductCard.displayName = 'ProductCard';

@@ -1,42 +1,29 @@
-'use client'
+import React from 'react';
 
-import { InputHTMLAttributes } from 'react'
-
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  error?: string
-  className?: string
-  rightElement?: React.ReactNode
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  variant?: 'default' | 'search';
+  autoComplete?: string;
 }
 
-export const Input = ({ 
-  label, 
-  error, 
-  className = '', 
-  rightElement,
-  ...props 
-}: InputProps) => {
+export const Input: React.FC<InputProps> = ({
+  variant = 'default',
+  className = '',
+  autoComplete = 'off',
+  ...props
+}) => {
+  const baseStyles =
+    'input px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500';
+
+  const variantStyles = {
+    default: '',
+    search: 'flex-1',
+  };
+
   return (
-    <div className="form-control">
-      <label className="label">
-        <span className="label-text font-semibold text-base">{label}</span>
-      </label>
-      <div className="join w-full">
-        <input
-          className={`join-item input input-bordered flex-1 focus:input-primary ${error ? 'input-error' : ''} ${className}`}
-          {...props}
-        />
-        {rightElement && (
-          <span className="join-item input input-bordered w-24">
-            {rightElement}
-          </span>
-        )}
-      </div>
-      {error && (
-        <label className="label">
-          <span className="label-text-alt text-error">{error}</span>
-        </label>
-      )}
-    </div>
-  )
-}
+    <input
+      autoComplete={autoComplete}
+      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      {...props}
+    />
+  );
+};

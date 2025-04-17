@@ -1,16 +1,12 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { MainLayout } from "../templates/MainLayout";
-import { SignInForm } from "../molecules/SignInForm";
-import { SubmitHandler } from "react-hook-form";
-import {
-  fetchUserData,
-  getCurrentUserUid,
-  signInWithEmail,
-} from "@/api/userOperations";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { queryClientParams } from "@/helpers/queryClientParams";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { MainLayout } from '../templates/MainLayout';
+import { SignInForm } from '../molecules/SignInForm';
+import { SubmitHandler } from 'react-hook-form';
+import { fetchUserData, getCurrentUserUid, signInWithEmail } from '@/api/userOperations';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { queryClientParams } from '@/helpers/queryClientParams';
 
 interface IInputs {
   email: string;
@@ -24,11 +20,11 @@ export const SignInPage: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [currentUserId, setCurrentUserId] = useState<string>('');
   // const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("token");
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token');
       setToken(storedToken);
     }
   }, []);
@@ -37,14 +33,11 @@ export const SignInPage: React.FC = () => {
       // setIsLoading(true);
       setLoginError(null);
       await signInWithEmail(email, password, setLoginError, setIsLoggedIn);
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
       console.log(loginError);
 
-      console.error(
-        "Помилка входу. Перевірте дані та спробуйте ще раз.",
-        error
-      );
+      console.error('Помилка входу. Перевірте дані та спробуйте ще раз.', error);
     } finally {
       // setIsLoading(false);
     }
@@ -52,49 +45,47 @@ export const SignInPage: React.FC = () => {
 
   const { data: dataCurrentUser } = useQuery(
     {
-      queryKey: ["user"],
+      queryKey: ['user'],
       queryFn: async () => await fetchUserData(currentUserId),
     },
     queryClientParams
   );
 
   useEffect(() => {
-    if (dataCurrentUser && dataCurrentUser.access === "admin") {
-      router.push("/dashboard");
+    if (dataCurrentUser && dataCurrentUser.access === 'admin') {
+      router.push('/dashboard');
     }
   }, [dataCurrentUser, router]);
 
   useEffect(() => {
     if (currentUserId) {
-      fetchUserData(currentUserId).then((data) =>
-        queryClient.setQueryData(["user"], data)
-      );
+      fetchUserData(currentUserId).then(data => queryClient.setQueryData(['user'], data));
     }
   }, [currentUserId, queryClient]);
 
   useEffect(() => {
     if (isLoggedIn) {
       getCurrentUserUid()
-        .then((user) => {
-          if (typeof user === "string") {
+        .then(user => {
+          if (typeof user === 'string') {
             setCurrentUserId(user);
           }
         })
-        .catch((error) => {
-          console.error("Error getting current user:", error);
+        .catch(error => {
+          console.error('Error getting current user:', error);
         });
     }
   }, [isLoggedIn]);
 
   useEffect(() => {
     getCurrentUserUid()
-      .then((user) => {
-        if (typeof user === "string") {
+      .then(user => {
+        if (typeof user === 'string') {
           setCurrentUserId(user);
         }
       })
-      .catch((error) => {
-        console.error("Error getting current user:", error);
+      .catch(error => {
+        console.error('Error getting current user:', error);
       });
   }, []);
   return (

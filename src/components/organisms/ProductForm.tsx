@@ -1,35 +1,36 @@
-'use client'
+'use client';
 
-import { useForm, FormProvider } from 'react-hook-form'
-import { Button } from '../atoms/Button'
-import { FormInput } from '../atoms/FormInput'
-import { FormSelect } from '../atoms/FormSelect'
-import { Input } from '../atoms/Input'
-import { FormTextarea } from '../atoms/FormTextarea'
-import { FormValues, FormOption } from '@/types/form'
-import { useState, useEffect } from 'react'
-import { Product } from '@/types/product'
-import { ProductContainer } from '../atoms/ProductContainer'
-import { createProduct, updateProduct } from '@/api/productsOperations'
-import { useRouter } from 'next/navigation'
-import { getAllCategories, createCategory } from '@/api/categoriesOperations'
-import { getAllUnits, createUnit } from '@/api/unitsOperations'
+import { useForm, FormProvider } from 'react-hook-form';
+import { Button } from '../atoms/Button';
+import { FormInput } from '../atoms/FormInput';
+import { FormSelect } from '../atoms/FormSelect';
+import { FormTextarea } from '../atoms/FormTextarea';
+import { FormValues, FormOption } from '@/types/form';
+import { useState, useEffect } from 'react';
+import { Product } from '@/types/product';
+import { ProductContainer } from '../atoms/ProductContainer';
+import { createProduct, updateProduct } from '@/api/productsOperations';
+import { useRouter } from 'next/navigation';
+import { getAllCategories, createCategory } from '@/api/categoriesOperations';
+import { getAllUnits, createUnit } from '@/api/unitsOperations';
+import { InputWithRight } from '../atoms/InputWIthRight';
+import { icons } from '@/assets/icons';
 
 interface ProductFormProps {
-  product?: Product
-  isEditMode?: boolean
+  product?: Product;
+  isEditMode?: boolean;
 }
 
 export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) => {
-  const router = useRouter()
-  const [categories, setCategories] = useState<FormOption[]>([])
-  const [units, setUnits] = useState<FormOption[]>([])
-  const [newCategory, setNewCategory] = useState('')
-  const [newUnit, setNewUnit] = useState('')
-  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false)
-  const [showNewUnitInput, setShowNewUnitInput] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const [categories, setCategories] = useState<FormOption[]>([]);
+  const [units, setUnits] = useState<FormOption[]>([]);
+  const [newCategory, setNewCategory] = useState('');
+  const [newUnit, setNewUnit] = useState('');
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [showNewUnitInput, setShowNewUnitInput] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -38,32 +39,33 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
       unit: product?.unit || '',
       description: product?.description || '',
     },
-  })
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-  } = methods
+  } = methods;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesData, unitsData] = await Promise.all([
-          getAllCategories(),
-          getAllUnits()
-        ]);
-        
-        setCategories(categoriesData.map(cat => ({
-          value: cat.value,
-          label: cat.label
-        })));
-        
-        setUnits(unitsData.map(unit => ({
-          value: unit.value,
-          label: unit.label
-        })));
+        const [categoriesData, unitsData] = await Promise.all([getAllCategories(), getAllUnits()]);
+
+        setCategories(
+          categoriesData.map(cat => ({
+            value: cat.value,
+            label: cat.label,
+          }))
+        );
+
+        setUnits(
+          unitsData.map(unit => ({
+            value: unit.value,
+            label: unit.label,
+          }))
+        );
 
         if (product) {
           setValue('category', product.category);
@@ -74,7 +76,7 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
         setError('Nie udało się załadować danych');
       }
     };
-    
+
     fetchData();
   }, [product, setValue]);
 
@@ -84,13 +86,16 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
         const newCategoryValue = newCategory.toLowerCase().replace(/\s+/g, '_');
         const newCategoryData = {
           value: newCategoryValue,
-          label: newCategory.trim()
+          label: newCategory.trim(),
         };
-        
+
         const createdCategory = await createCategory(newCategoryData);
-        setCategories([...categories, { value: createdCategory.value, label: createdCategory.label }]);
+        setCategories([
+          ...categories,
+          { value: createdCategory.value, label: createdCategory.label },
+        ]);
         setValue('category', createdCategory.value);
-    
+
         setShowNewCategoryInput(false);
         setNewCategory('');
       } catch (err) {
@@ -106,13 +111,13 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
         const newUnitValue = newUnit.toLowerCase().replace(/\s+/g, '_');
         const newUnitData = {
           value: newUnitValue,
-          label: newUnit.trim()
+          label: newUnit.trim(),
         };
-        
+
         const createdUnit = await createUnit(newUnitData);
         setUnits([...units, { value: createdUnit.value, label: createdUnit.label }]);
         setValue('unit', createdUnit.value);
-    
+
         setShowNewUnitInput(false);
         setNewUnit('');
       } catch (err) {
@@ -124,31 +129,31 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
 
   const onSubmit = async (data: FormValues) => {
     try {
-      setIsSubmitting(true)
-      setError(null)
+      setIsSubmitting(true);
+      setError(null);
 
       const productData = {
         name: data.name,
         category: data.category,
         unit: data.unit,
         description: data.description,
-      }
+      };
 
       if (isEditMode && product) {
-        await updateProduct(product.id, productData)
+        await updateProduct(product.id, productData);
       } else {
-        await createProduct(productData)
+        await createProduct(productData);
       }
 
-      router.push('/dashboard/products')
-      router.refresh()
+      router.push('/dashboard/products');
+      router.refresh();
     } catch (err) {
-      setError('Wystąpił błąd podczas zapisywania produktu')
-      console.error('Błąd podczas zapisywania produktu:', err)
+      setError('Wystąpił błąd podczas zapisywania produktu');
+      console.error('Błąd podczas zapisywania produktu:', err);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -192,13 +197,13 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
                     </label>
                     {!showNewCategoryInput && (
                       <Button
-                        variant="primary"
+                        variant="add"
                         size="sm"
                         type="button"
                         onClick={() => setShowNewCategoryInput(true)}
                         className="text-sm"
                       >
-                        + Nowa kategoria
+                        <icons.add className="h-5 w-5" /> Nowa kategoria
                       </Button>
                     )}
                   </div>
@@ -214,10 +219,10 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
 
                   {showNewCategoryInput && (
                     <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-4">
-                      <Input
+                      <InputWithRight
                         label="Nazwa nowej kategorii"
                         value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
+                        onChange={e => setNewCategory(e.target.value)}
                         placeholder="Wprowadź nazwę kategorii"
                       />
                       <div className="flex justify-end gap-2">
@@ -226,18 +231,13 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
                           size="sm"
                           type="button"
                           onClick={() => {
-                            setShowNewCategoryInput(false)
-                            setNewCategory('')
+                            setShowNewCategoryInput(false);
+                            setNewCategory('');
                           }}
                         >
                           Anuluj
                         </Button>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          type="button"
-                          onClick={handleAddCategory}
-                        >
+                        <Button variant="add" size="sm" type="button" onClick={handleAddCategory}>
                           Dodaj kategorię
                         </Button>
                       </div>
@@ -254,13 +254,13 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
                     </label>
                     {!showNewUnitInput && (
                       <Button
-                        variant="primary"
+                        variant="add"
                         size="sm"
                         type="button"
                         onClick={() => setShowNewUnitInput(true)}
                         className="text-sm"
                       >
-                        + Nowa jednostka
+                        <icons.add className="h-5 w-5" /> Nowa jednostka
                       </Button>
                     )}
                   </div>
@@ -276,10 +276,10 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
 
                   {showNewUnitInput && (
                     <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-4">
-                      <Input
+                      <InputWithRight
                         label="Nazwa nowej jednostki"
                         value={newUnit}
-                        onChange={(e) => setNewUnit(e.target.value)}
+                        onChange={e => setNewUnit(e.target.value)}
                         placeholder="Wprowadź nazwę jednostki"
                       />
                       <div className="flex justify-end gap-2">
@@ -288,18 +288,13 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
                           size="sm"
                           type="button"
                           onClick={() => {
-                            setShowNewUnitInput(false)
-                            setNewUnit('')
+                            setShowNewUnitInput(false);
+                            setNewUnit('');
                           }}
                         >
                           Anuluj
                         </Button>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          type="button"
-                          onClick={handleAddUnit}
-                        >
+                        <Button variant="add" size="sm" type="button" onClick={handleAddUnit}>
                           Dodaj jednostkę
                         </Button>
                       </div>
@@ -310,23 +305,16 @@ export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) =
             </div>
 
             <div className="card-actions justify-end mt-8">
-              <Button
-                variant="danger"
-                onClick={() => router.push('/dashboard/products')}
-              >
+              <Button variant="danger" onClick={() => router.push('/dashboard/products')}>
                 Anuluj
               </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Dodaj produkt')}
+              <Button type="submit" variant="add" disabled={isSubmitting}>
+                {isSubmitting ? 'Zapisywanie...' : isEditMode ? 'Zapisz zmiany' : 'Dodaj produkt'}
               </Button>
             </div>
           </ProductContainer>
         </form>
       </FormProvider>
     </div>
-  )
-} 
+  );
+};

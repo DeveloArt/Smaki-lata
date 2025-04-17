@@ -5,7 +5,9 @@ const isDev = process.env.NODE_ENV === "development";
 
 const config: NextConfig = {
   reactStrictMode: true,
-  webpack: (config) => {
+  webpack: (
+      // @ts-ignore
+    config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
