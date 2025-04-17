@@ -17,16 +17,13 @@ export const useBreadcrumbs = () => {
     const paths = pathname.split('/').filter(Boolean);
     const relevantPaths = paths.filter(path => path !== 'dashboard');
     
-    // Najpierw sprawdzamy, czy to strona dodawania nowego produktu
     const isAddProductPage = relevantPaths[0] === 'products' && 
       relevantPaths[1] === 'new';
     
-    // Następnie sprawdzamy, czy to strona edycji produktu
     const isEditProductPage = relevantPaths[0] === 'products' && 
       relevantPaths[1] && 
       relevantPaths[2] === 'edit';
     
-    // Na końcu sprawdzamy, czy to strona szczegółów produktu
     const isProductPage = relevantPaths[0] === 'products' && 
       relevantPaths[1] && 
       !relevantPaths[2] &&
