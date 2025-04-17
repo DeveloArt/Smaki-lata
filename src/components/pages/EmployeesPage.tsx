@@ -11,8 +11,7 @@ import { useRef } from 'react';
 export const EmployeesPage: React.FC = () => {
   const [editingEmployee, setEditingEmployee] = useState<EmployeeType | null>(null);
   const queryClient = useQueryClient();
-  const modalRef = useRef<HTMLDialogElement>(null);
-
+  const modalRef = useRef<HTMLDialogElement>(null!);
   const { data: dataEmployees } = useQuery(
     {
       queryKey: ['employee'],
