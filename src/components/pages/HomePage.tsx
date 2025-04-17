@@ -22,7 +22,6 @@ export const HomePage: React.FC = () => {
     getCurrentUserUid().then((user) => {
       if (typeof user === "string") {
         console.log(user);
-
         setCurrentUserId(user);
       }
     });
