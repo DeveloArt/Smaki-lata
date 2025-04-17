@@ -9,7 +9,7 @@ import { SalesChart } from '@/components/organisms/SalesChart'
 import { getProductStalls } from '@/helpers/productStallsHelpers'
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
-  const { id } = await params
+  const id = params.id
   const product = await getProductById(id)
 
   if (!product) {
