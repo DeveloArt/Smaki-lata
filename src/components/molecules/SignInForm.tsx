@@ -1,5 +1,6 @@
-import { Controller, useForm } from "react-hook-form";
-import { REGEX_EMAIL } from "../../constants/REGEX";
+import { Controller, useForm } from 'react-hook-form';
+import { REGEX_EMAIL } from '../../constants/REGEX';
+import { Input } from '../atoms/Input';
 interface IInputs {
   email: string;
   password: string;
@@ -16,8 +17,8 @@ export const SignInForm = ({ onSubmit }: LoginFormProps) => {
     formState: { isValid },
   } = useForm<IInputs>({
     defaultValues: {
-      email: "smakilata@gmail.com",
-      password: "smakilata2025!",
+      email: 'smakilata@gmail.com',
+      password: 'smakilata2025!',
     },
   });
   return (
@@ -32,16 +33,17 @@ export const SignInForm = ({ onSubmit }: LoginFormProps) => {
           required: true,
           pattern: {
             value: REGEX_EMAIL,
-            message: "Pole nie może zawierać specjalnych znaków",
+            message: 'Pole nie może zawierać specjalnych znaków',
           },
         }}
         render={() => (
           <div>
             <label className="fieldset-label">Email</label>
-            <input
+            <Input
               className="input"
               placeholder="email"
-              {...register("email")}
+              autoComplete={'on'}
+              {...register('email')}
             />
           </div>
         )}
@@ -55,19 +57,16 @@ export const SignInForm = ({ onSubmit }: LoginFormProps) => {
         render={() => (
           <div>
             <label className="fieldset-label">Hasło</label>
-            <input
+            <Input
               className="input"
               placeholder="hasło"
-              {...register("password")}
+              autoComplete={'on'}
+              {...register('password')}
             />
           </div>
         )}
       />
-      <button
-        className="btn btn-neutral mt-4"
-        type="submit"
-        disabled={!isValid}
-      >
+      <button className="btn btn-neutral mt-4" type="submit" disabled={!isValid}>
         Zaloguj się
       </button>
     </form>

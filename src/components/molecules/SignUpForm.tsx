@@ -2,6 +2,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { REGEX_EMAIL } from '../../constants/REGEX';
 import { Button } from '../atoms/Button';
 import { Input } from '../atoms/Input';
+import { EmployeeType } from '@/helpers/schemas';
+import { useEffect } from 'react';
 interface IInputs {
   email: string;
   firstName: string;
@@ -9,23 +11,32 @@ interface IInputs {
   telNumber: string;
 }
 interface LoginFormProps {
-  onSubmit: (data: IInputs) => void;
+  onSubmit: (data: EmployeeType) => void;
+  defaultValues?: EmployeeType | null;
 }
-
-export const SignUpForm = ({ onSubmit }: LoginFormProps) => {
+const EMPTY_FORM_VALUES = {
+  email: '',
+  firstName: '',
+  lastName: '',
+  telNumber: '',
+};
+export const SignUpForm = ({ onSubmit, defaultValues }: LoginFormProps) => {
   const {
     control,
     handleSubmit,
     register,
     formState: { isValid },
+    reset,
   } = useForm<IInputs>({
-    defaultValues: {
-      email: 'smakilata@gmail.com',
-      firstName: 'Tonek',
-      lastName: 'Kowalski',
-      telNumber: '123456789',
-    },
+    defaultValues,
   });
+
+  console.log('defaultValues :', defaultValues);
+
+  useEffect(() => {
+    reset(defaultValues ?? EMPTY_FORM_VALUES);
+  }, [defaultValues, reset]);
+
   return (
     <form
       className={`fieldset bg-base-200 border border-base-300 p-4 rounded-box w-full`}
@@ -84,7 +95,7 @@ export const SignUpForm = ({ onSubmit }: LoginFormProps) => {
         )}
       />
       <Button variant="add" type="submit" className="mt-4" disabled={!isValid}>
-        Zarejestruj nowego pracownika
+        {defaultValues ? 'Edytuj pracownika' : 'Zarejestruj nowego pracownika'}
       </Button>
     </form>
   );

@@ -2,9 +2,15 @@ import React from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'search';
+  autoComplete?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ variant = 'default', className = '', ...props }) => {
+export const Input: React.FC<InputProps> = ({
+  variant = 'default',
+  className = '',
+  autoComplete = 'off',
+  ...props
+}) => {
   const baseStyles =
     'input px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500';
 
@@ -13,5 +19,11 @@ export const Input: React.FC<InputProps> = ({ variant = 'default', className = '
     search: 'flex-1',
   };
 
-  return <input className={`${baseStyles} ${variantStyles[variant]} ${className}`} {...props} />;
+  return (
+    <input
+      autoComplete={autoComplete}
+      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      {...props}
+    />
+  );
 };
