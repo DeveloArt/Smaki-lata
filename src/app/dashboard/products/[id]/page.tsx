@@ -2,7 +2,7 @@ import { ProductHeader } from '@/components/molecules/ProductHeader'
 import { ProductBasicInfo } from '@/components/organisms/ProductBasicInfo'
 import { ProductStats } from '@/components/organisms/ProductStats'
 import { ProductStalls } from '@/components/organisms/ProductStalls'
-import { Button } from '@/components/atoms/Button'
+// import { Button } from '@/components/atoms/Button'
 import { InfoCard } from '@/components/atoms/InfoCard'
 import { getProduct } from '@/helpers/productHelpers'
 import { SalesChart } from '@/components/organisms/SalesChart'
@@ -35,7 +35,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
                     productStalls={productStalls}
                   />
                   <ProductStats unit={product.unit} />
-                  <InfoCard title="Szybkie akcje">
+                  {/* <InfoCard title="Szybkie akcje">
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button className="flex-1 whitespace-nowrap justify-center">
                         Dodaj do zamówienia
@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
                         Historia zmian
                       </Button>
                     </div>
-                  </InfoCard>
+                  </InfoCard> */}
                 </div>
 
                 <div className="space-y-6">

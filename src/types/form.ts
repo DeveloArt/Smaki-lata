@@ -4,6 +4,7 @@ export interface FormValues {
   description: string
   stalls: string[]
   unit: string
+  newCategory?: string
 }
 
 export interface FormOption {

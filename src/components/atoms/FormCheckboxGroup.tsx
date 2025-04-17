@@ -8,20 +8,22 @@ interface FormCheckboxGroupProps {
   register: UseFormRegister<FormValues>
   name: keyof FormValues
   options: FormOption[]
+  className?: string
 }
 
 export const FormCheckboxGroup = ({ 
   label, 
   register, 
   name, 
-  options 
+  options,
+  className = ''
 }: FormCheckboxGroupProps) => {
   return (
     <div className="form-control">
       <label className="label">
         <span className="label-text font-semibold text-base">{label}</span>
       </label>
-      <div className="flex flex-wrap gap-2">
+      <div className={`flex flex-wrap gap-2 ${className}`}>
         {options.map((option) => (
           <label key={option.value} className="label cursor-pointer gap-2 p-2 bg-base-100 rounded-lg border border-base-300 hover:border-primary transition-colors">
             <input

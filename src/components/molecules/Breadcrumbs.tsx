@@ -16,7 +16,7 @@ const pathLabels: Record<string, string> = {
   'tables': 'Stoiska',
   'delivery': 'Dostawy',
   'reports': 'Raporty',
-  'add': 'Dodaj produkt'
+  'new': 'Nowy'
 };
 
 export const Breadcrumbs = () => {
@@ -40,7 +40,7 @@ export const Breadcrumbs = () => {
   } else if (isAddProductPage) {
     breadcrumbs.push(
       { label: 'Produkty', href: '/dashboard/products' },
-      { label: 'Dodaj produkt', href: '/dashboard/products/add' }
+      { label: 'Nowy', href: '/dashboard/products/add' }
     );
   } else {
     let currentPath = '/dashboard';
