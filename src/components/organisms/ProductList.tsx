@@ -1,49 +1,34 @@
+'use client'
 import { ProductCard } from '../molecules/ProductCard';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  unit: string;
-  quantity: number;
-}
+import { Product, ProductStall } from '@/types/product';
 
 interface ProductListProps {
   products: Product[];
+  productStalls: Record<string, ProductStall[]>;
 }
 
-export const ProductList = ({ products }: ProductListProps) => {
+export function ProductList({ products, productStalls }: ProductListProps) {
   return (
     <div className="overflow-x-auto">
       <table className="table w-full">
         <thead>
-          <tr className="bg-base-200">
-            <th className="px-6 py-3 text-left text-lg font-semibold">Nazwa produktu</th>
-            <th className="px-6 py-3 text-center text-lg font-semibold">Ilość</th>
-            <th className="px-6 py-3 text-right text-lg font-semibold">
-              <div className="flex items-center justify-end">
-                <div className="flex flex-col items-end w-[120px] mr-12">
-                  <span>Cena</span>
-                  <span className="text-sm font-normal">(zł)</span>
-                </div>
-                <div className="w-8"></div>
-              </div>
-            </th>
+          <tr className="bg-gray-300 dark:bg-gray-800">
+            <th className="w-1/3 px-6 py-3 text-left text-lg font-semibold text-gray-900 dark:text-gray-100">Nazwa produktu</th>
+            <th className="w-1/3 px-6 py-3 text-center text-lg font-semibold text-gray-900 dark:text-gray-100">Jednostka</th>
+            <th className="w-1/3 px-6 py-3 text-left text-lg font-semibold text-gray-900 dark:text-gray-100">Stoiska</th>
+            <th className="px-6 py-3 text-right text-lg font-semibold text-gray-900 dark:text-gray-100">Akcje</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-gray-800">
           {products.map((product) => (
             <ProductCard
               key={product.id}
-              id={product.id}
-              name={product.name}
-              price={product.price}
-              unit={product.unit}
-              quantity={product.quantity}
+              {...product}
+              productStalls={productStalls[product.id] || []}
             />
           ))}
         </tbody>
       </table>
     </div>
   );
-}; 
+} 

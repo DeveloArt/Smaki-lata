@@ -1,6 +1,8 @@
 'use client'
 
-import { Button } from '../atoms/Button'
+import { Button } from "../atoms/Button"
+
+
 
 export const ProductActions = () => {
   const handleEdit = () => {

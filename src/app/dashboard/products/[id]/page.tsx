@@ -1,19 +1,19 @@
-import { notFound } from 'next/navigation'
 import { ProductHeader } from '@/components/molecules/ProductHeader'
 import { ProductBasicInfo } from '@/components/organisms/ProductBasicInfo'
 import { ProductStats } from '@/components/organisms/ProductStats'
 import { ProductStalls } from '@/components/organisms/ProductStalls'
 import { Button } from '@/components/atoms/Button'
 import { InfoCard } from '@/components/atoms/InfoCard'
-import Link from 'next/link'
-import { IoMdAdd } from 'react-icons/io'
 import { getProduct } from '@/helpers/productHelpers'
+import { SalesChart } from '@/components/organisms/SalesChart'
+import { getProductStalls } from '@/helpers/productStallsHelpers'
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id)
+  const productStalls = await getProductStalls(params.id)
 
   if (!product) {
-    notFound()
+    return <div>Produkt nie znaleziony</div>
   }
 
   return (
@@ -23,7 +23,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
           <ProductHeader />
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 p-6">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-gray-800 dark:to-gray-700 p-6">
               <h1 className="text-3xl font-bold text-white">{product.name}</h1>
             </div>
 
@@ -31,17 +31,16 @@ export default async function ProductPage({ params }: { params: { id: string } }
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <ProductBasicInfo 
-                    price={product.price}
                     unit={product.unit}
-                    quantity={product.quantity}
+                    productStalls={productStalls}
                   />
                   <ProductStats unit={product.unit} />
                   <InfoCard title="Szybkie akcje">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Button variant="secondary">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button className="flex-1 whitespace-nowrap justify-center">
                         Dodaj do zamówienia
                       </Button>
-                      <Button variant="secondary">
+                      <Button className="flex-1 whitespace-nowrap justify-center">
                         Historia zmian
                       </Button>
                     </div>
@@ -49,19 +48,9 @@ export default async function ProductPage({ params }: { params: { id: string } }
                 </div>
 
                 <div className="space-y-6">
-                  <div className="flex justify-end">
-                    <Link href="/dashboard/products/add">
-                      <Button className="flex items-center gap-2">
-                        <IoMdAdd />
-                        Dodaj produkt
-                      </Button>
-                    </Link>
-                  </div>
                   <ProductStalls productId={product.id} />
-                  <InfoCard title="Historia cen">
-                    <div className="h-48 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center">
-                      <span className="text-gray-400 dark:text-gray-500">Wykres cen będzie dostępny wkrótce</span>
-                    </div>
+                  <InfoCard title="Statystyki sprzedaży">
+                    <SalesChart />
                   </InfoCard>
                 </div>
               </div>

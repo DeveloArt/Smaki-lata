@@ -22,7 +22,6 @@ export const ProductStalls = ({ productId }: ProductStallsProps) => {
           <span>Stoisko 1, Stoisko 3</span>
         </div>
         <Button 
-          variant="secondary" 
           onClick={handleEditStalls}
           className="w-full"
         >

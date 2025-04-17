@@ -1,45 +1,95 @@
+'use client'
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Product } from '@/types/product';
 
-interface ProductCardProps {
-  id: string;
-  name: string;
-  price: number;
-  unit: string;
-  quantity: number;
+interface ProductCardProps extends Product {
+  productStalls?: {
+    stallId: string;
+    price: number;
+    quantity: number;
+  }[];
 }
 
-export const ProductCard = ({ id, name, price, unit, quantity }: ProductCardProps) => {
-  const unitPrice = quantity > 0 ? price / quantity : 0;
+export const ProductCard = ({ 
+  id, 
+  name, 
+  unit,
+  productStalls = []
+}: ProductCardProps) => {
+  const router = useRouter();
+
+  const handleRowClick = () => router.push(`/dashboard/products/${id}`);
+
+  const handleMenuClick = (e: React.MouseEvent) => e.stopPropagation();
+
+  // const getAvailabilityColor = (status: string) => {
+  //   switch (status) {
+  //     case 'available':
+  //       return 'text-green-600 dark:text-green-400';
+  //     case 'unavailable':
+  //       return 'text-red-600 dark:text-red-400';
+  //     case 'low_stock':
+  //       return 'text-yellow-600 dark:text-yellow-400';
+  //     default:
+  //       return 'text-gray-600 dark:text-gray-400';
+  //   }
+  // };
+
+  // const getAvailabilityText = (status: string) => {
+  //   switch (status) {
+  //     case 'available':
+  //       return 'Dostępny';
+  //     case 'unavailable':
+  //       return 'Niedostępny';
+  //     case 'low_stock':
+  //       return 'Niski stan';
+  //     default:
+  //       return status;
+  //   }
+  // };
 
   return (
-    <tr className="hover:bg-base-200 transition-colors">
-      <td className="px-6 py-4 whitespace-nowrap">
-        <Link href={`/dashboard/products/${id}`} className="text-lg font-medium hover:text-fresh-600">
+    <tr 
+      className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+      onClick={handleRowClick}
+    >
+      <td className="w-1/3 px-6 py-4 whitespace-nowrap">
+        <div className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-blue-700 dark:hover:text-blue-300">
           {name}
-        </Link>
+        </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-gray-600 text-center">
-          {quantity} {unit}
+      <td className="w-1/3 px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700 dark:text-gray-200 text-center">
+          {unit}
+        </div>
+      </td>
+      <td className="w-1/3 px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700 dark:text-gray-200">
+          {productStalls.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {productStalls.map(stall => (
+                <span key={stall.stallId}>
+                  Stoisko {stall.stallId.replace('stall', '')}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500">Brak przypisanych stoisk</div>
+          )}
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center justify-end">
-          <div className="flex flex-col items-end" style={{ width: '120px', marginRight: '2rem' }}>
-            <div className="text-xl font-bold text-primary">{price.toFixed(2)} zł</div>
-            <div className="text-sm text-gray-500">
-              {unitPrice.toFixed(2)} zł/{unit}
-            </div>
-          </div>
-          <div className="dropdown dropdown-end">
+          <div className="dropdown dropdown-end" onClick={handleMenuClick}>
             <div tabIndex={0} role="button" className="btn btn-ghost btn-sm">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-5 h-5 stroke-current">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01" />
               </svg>
             </div>
-            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32">
-              <li><Link href={`/products/${id}`} className="text-primary">Edytuj</Link></li>
-              <li><a className="text-error">Usuń</a></li>
+            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-white dark:bg-gray-700 rounded-box w-32">
+              <li><Link href={`/products/${id}`} className="text-blue-700 dark:text-blue-300">Edytuj</Link></li>
+              <li><a className="text-red-700 dark:text-red-300">Usuń</a></li>
             </ul>
           </div>
         </div>

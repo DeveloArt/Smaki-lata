@@ -9,28 +9,15 @@ import { FormCheckboxGroup } from '../atoms/FormCheckboxGroup'
 import { FormValues, FormOption } from '@/types/form'
 
 const categories: FormOption[] = [
-  { value: 'fruits', label: 'Owoce' },
-  { value: 'vegetables', label: 'Warzywa' },
-  { value: 'berries', label: 'Owoce jagodowe' },
-  { value: 'exotic', label: 'Owoce egzotyczne' },
-  { value: 'herbs', label: 'Zioła' },
+  { value: 'food', label: 'Jedzenie' },
+  { value: 'drinks', label: 'Napoje' },
+  { value: 'souvenirs', label: 'Pamiątki' },
 ]
 
 const stalls: FormOption[] = [
-  { value: 'stall1', label: 'Stoisko owocowe' },
-  { value: 'stall2', label: 'Stoisko warzywne' },
-  { value: 'stall3', label: 'Stoisko ziołowe' },
-  { value: 'stall4', label: 'Stoisko egzotyczne' },
-  { value: 'stall5', label: 'Stoisko sezonowe' },
-]
-
-const units: FormOption[] = [
-  { value: 'kg', label: 'Kilogram' },
-  { value: 'g', label: 'Gram' },
-  { value: 'szt', label: 'Sztuka' },
-  { value: 'op', label: 'Opakowanie' },
-  { value: 'kratka', label: 'Kratka' },
-  { value: 'skrzynka', label: 'Skrzynka' },
+  { value: 'stall1', label: 'Stoisko 1' },
+  { value: 'stall2', label: 'Stoisko 2' },
+  { value: 'stall3', label: 'Stoisko 3' },
 ]
 
 export const ProductForm = () => {
@@ -42,7 +29,6 @@ export const ProductForm = () => {
   } = useForm<FormValues>({
     defaultValues: {
       stalls: [],
-      unit: 'szt',
     },
   })
 
@@ -75,13 +61,15 @@ export const ProductForm = () => {
             required
           />
 
-          <FormSelect
-            label="Jednostka"
-            error={errors.unit?.message}
+          <FormInput
+            label="Cena"
+            error={errors.price?.message}
             register={register}
-            name="unit"
-            options={units}
+            name="price"
+            type="number"
+            step="0.01"
             required
+            placeholder="0.00"
           />
 
           <FormTextarea
