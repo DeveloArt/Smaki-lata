@@ -90,6 +90,7 @@ const checkForUser = () => {
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {
+        console.log('user :', user);    
         unsubscribe();
       },
       reject

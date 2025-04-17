@@ -4,14 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { queryClientParams } from "../../helpers/queryClientParams";
 import { MainLayout } from "../templates/MainLayout";
 import {
-  fetchCurrentUser,
   fetchUserData,
   getCurrentUserUid,
 } from "@/api/userOperations";
-import { useRouter } from "next/navigation";
 export const HomePage: React.FC = () => {
   const [currentUserId, setCurrentUserId] = useState<string>("");
-
   const { data: dataCurrentUser } = useQuery(
     {
       queryKey: ["user"],
