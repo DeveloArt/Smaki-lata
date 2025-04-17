@@ -1,5 +1,3 @@
-'use client'
-
 import { InfoCard } from '../atoms/InfoCard'
 import { ProductInfoRow } from '../molecules/ProductInfoRow'
 import { ProductStall } from '@/types/product'

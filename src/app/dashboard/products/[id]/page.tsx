@@ -9,14 +9,14 @@ import { SalesChart } from '@/components/organisms/SalesChart'
 import { getProductStalls } from '@/helpers/productStallsHelpers'
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
-  const productId = params.id
-  const product = await getProductById(productId)
+  const { id } = await params
+  const product = await getProductById(id)
 
   if (!product) {
     return <div>Produkt nie znaleziony</div>
   }
 
-  const productStalls = await getProductStalls(productId)
+  const productStalls = await getProductStalls(id)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
