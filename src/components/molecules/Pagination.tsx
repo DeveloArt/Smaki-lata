@@ -21,7 +21,6 @@ export const Pagination = ({ currentPage, totalPages, baseUrl }: PaginationProps
   return (
     <div className="flex justify-center p-4">
       <div className="join">
-        {/* Przycisk "Poprzednia" */}
         {currentPage > 1 && (
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -31,8 +30,6 @@ export const Pagination = ({ currentPage, totalPages, baseUrl }: PaginationProps
             <FaChevronLeft className="w-3 h-3" />
           </button>
         )}
-        
-        {/* Linki do każdej strony */}
         {pages.map((page) => (
           <button
             key={page}
@@ -44,8 +41,6 @@ export const Pagination = ({ currentPage, totalPages, baseUrl }: PaginationProps
             {page}
           </button>
         ))}
-        
-        {/* Przycisk "Następna" */}
         {currentPage < totalPages && (
           <button
             onClick={() => handlePageChange(currentPage + 1)}
