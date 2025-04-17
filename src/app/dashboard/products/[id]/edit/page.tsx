@@ -1,10 +1,9 @@
 import { ProductForm } from '@/components/organisms/ProductForm'
-import { getProduct } from '@/helpers/productHelpers'
-import { getProductStalls } from '@/helpers/productStallsHelpers'
+import { getProductById } from '@/api/productsOperations'
 
 export default async function EditProductPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id)
-  const productStalls = await getProductStalls(params.id)
+  const productId = params.id
+  const product = await getProductById(productId)
 
   if (!product) {
     return <div>Produkt nie znaleziony</div>
@@ -15,7 +14,6 @@ export default async function EditProductPage({ params }: { params: { id: string
       <div className="container mx-auto px-4">
         <ProductForm 
           product={product}
-          productStalls={productStalls}
           isEditMode={true}
         />
       </div>

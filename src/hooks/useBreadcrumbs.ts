@@ -1,8 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { getProduct } from '@/helpers/productHelpers';
+import { getProductById } from '@/api/productsOperations';
 import { BreadcrumbItem, PathType } from '@/types/breadcrumbs';
 import { PATH_LABELS, DEFAULT_BREADCRUMB } from '@/constants/breadcrumbs';
+
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
 
 export const useBreadcrumbs = () => {
   const pathname = usePathname();
@@ -13,17 +17,20 @@ export const useBreadcrumbs = () => {
     const paths = pathname.split('/').filter(Boolean);
     const relevantPaths = paths.filter(path => path !== 'dashboard');
     
-    const isProductPage = relevantPaths[0] === 'products' && 
-      relevantPaths[1] && 
-      !relevantPaths[2] && 
-      !isNaN(Number(relevantPaths[1]));
-    
+    // Najpierw sprawdzamy, czy to strona dodawania nowego produktu
     const isAddProductPage = relevantPaths[0] === 'products' && 
-      relevantPaths[1] === 'add';
+      relevantPaths[1] === 'new';
     
+    // Następnie sprawdzamy, czy to strona edycji produktu
     const isEditProductPage = relevantPaths[0] === 'products' && 
       relevantPaths[1] && 
       relevantPaths[2] === 'edit';
+    
+    // Na końcu sprawdzamy, czy to strona szczegółów produktu
+    const isProductPage = relevantPaths[0] === 'products' && 
+      relevantPaths[1] && 
+      !relevantPaths[2] &&
+      !isAddProductPage;
 
     let pathType: PathType = 'default';
     if (isProductPage) pathType = 'product';
@@ -39,17 +46,23 @@ export const useBreadcrumbs = () => {
 
   useEffect(() => {
     if (pathType === 'product' || pathType === 'edit-product') {
-      getProduct(productId)
+      getProductById(productId)
         .then(product => {
           if (product) {
-            setProductName(product.name);
+            setProductName(capitalizeFirstLetter(product.name));
             setError(null);
+          } else {
+            setError('Produkt nie znaleziony');
           }
         })
         .catch(err => {
           setError('Nie udało się załadować nazwy produktu');
           console.error('Błąd ładowania produktu:', err);
         });
+    } else {
+      // Resetujemy stan, gdy nie jesteśmy na stronie produktu
+      setProductName('');
+      setError(null);
     }
   }, [pathType, productId]);
 
@@ -60,13 +73,13 @@ export const useBreadcrumbs = () => {
       case 'product':
         items.push(
           { label: 'Produkty', href: '/dashboard/products' },
-          { label: productName || productId, href: `/dashboard/products/${productId}` }
+          { label: productName || 'Ładowanie...', href: `/dashboard/products/${productId}` }
         );
         break;
       case 'edit-product':
         items.push(
           { label: 'Produkty', href: '/dashboard/products' },
-          { label: productName || productId, href: `/dashboard/products/${productId}` },
+          { label: productName || 'Ładowanie...', href: `/dashboard/products/${productId}` },
           { label: 'Edytuj', href: `/dashboard/products/${productId}/edit` }
         );
         break;
@@ -80,7 +93,7 @@ export const useBreadcrumbs = () => {
         let currentPath = '/dashboard';
         paths.forEach((path) => {
           currentPath += `/${path}`;
-          const label = PATH_LABELS[path] || path.charAt(0).toUpperCase() + path.slice(1);
+          const label = PATH_LABELS[path] || capitalizeFirstLetter(path);
           items.push({ label, href: currentPath });
         });
     }

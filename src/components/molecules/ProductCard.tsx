@@ -1,110 +1,167 @@
-'use client'
+'use client';
+
+import { useState, useRef, useEffect, useCallback, memo } from 'react';
+import { Product, ProductStall } from '@/types/product';
+import { deleteProduct } from '@/api/productsOperations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Product } from '@/types/product';
+import { BsThreeDots } from 'react-icons/bs';
+import { Button } from '../atoms/Button';
 import { Modal } from '../atoms/Modal';
-import { useState } from 'react';
-import { ProductContainer } from '../atoms/ProductContainer';
 
-interface ProductCardProps extends Product {
-  productStalls?: {
-    stallId: string;
-    price: number;
-    quantity: number;
-  }[];
+interface ProductCardProps {
+  product: Product;
+  stalls: ProductStall[];
 }
 
-export const ProductCard = ({ 
-  id, 
-  name, 
-  unit,
-  productStalls = []
-}: ProductCardProps) => {
+export const ProductCard = memo(({ product, stalls }: ProductCardProps) => {
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleRowClick = () => router.push(`/dashboard/products/${id}`);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
 
-  const handleMenuClick = (e: React.MouseEvent) => e.stopPropagation();
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
+        setIsDeleteModalOpen(false);
+      }
+    };
 
-  const handleDelete = () => {
-    console.log('Deleting product:', id);
-    setIsDeleteModalOpen(false);
-  };
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
-  // const getAvailabilityColor = (status: string) => {
-  //   switch (status) {
-  //     case 'available':
-  //       return 'text-green-600 dark:text-green-400';
-  //     case 'unavailable':
-  //       return 'text-red-600 dark:text-red-400';
-  //     case 'low_stock':
-  //       return 'text-yellow-600 dark:text-yellow-400';
-  //     default:
-  //       return 'text-gray-600 dark:text-gray-400';
-  //   }
-  // };
+  const handleDeleteConfirm = useCallback(async () => {
+    try {
+      setIsDeleting(true);
+      setError(null);
+      await deleteProduct(product.id);
+      router.push('/dashboard/products');
+      router.refresh();
+    } catch (err) {
+      console.error('Błąd podczas usuwania produktu:', err);
+      setError('Wystąpił błąd podczas usuwania produktu. Spróbuj ponownie.');
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
+    }
+  }, [product.id, router]);
 
-  // const getAvailabilityText = (status: string) => {
-  //   switch (status) {
-  //     case 'available':
-  //       return 'Dostępny';
-  //     case 'unavailable':
-  //       return 'Niedostępny';
-  //     case 'low_stock':
-  //       return 'Niski stan';
-  //     default:
-  //       return status;
-  //   }
-  // };
+  const handleRowClick = useCallback((e: React.MouseEvent) => {
+    if (menuRef.current?.contains(e.target as Node)) {
+      return;
+    }
+    router.push(`/dashboard/products/${product.id}`);
+  }, [product.id, router]);
+
+  const toggleMenu = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(prev => !prev);
+  }, []);
+
+  const openDeleteModal = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDeleteModalOpen(true);
+    setIsMenuOpen(false);
+  }, []);
+
+  if (!product) {
+    return null;
+  }
+
+  const stallsText = stalls.length > 0 
+    ? stalls.map(stall => stall.stallId).join(', ') 
+    : 'Brak stoisk';
 
   return (
     <>
       <tr 
-        className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+        className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200" 
         onClick={handleRowClick}
+        role="row"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            router.push(`/dashboard/products/${product.id}`);
+          }
+        }}
       >
-        <td className="w-1/3 px-6 py-4 whitespace-nowrap">
-          <div className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-blue-700 dark:hover:text-blue-300">
-            {name}
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-sm font-medium text-gray-900 dark:text-white">
+            {product.name}
           </div>
         </td>
-        <td className="w-1/3 px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700 dark:text-gray-200 text-center">
-            {unit}
-          </div>
-        </td>
-        <td className="w-1/3 px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700 dark:text-gray-200">
-            {productStalls.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {productStalls.map(stall => (
-                  <span key={stall.stallId}>
-                    Stoisko {stall.stallId.replace('stall', '')}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">Brak przypisanych stoisk</div>
-            )}
+        <td className="px-6 py-4 whitespace-nowrap text-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {product.category}
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <div className="flex items-center justify-end">
-            <div className="dropdown dropdown-end" onClick={handleMenuClick}>
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-5 h-5 stroke-current">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01" />
-                </svg>
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {stallsText}
+          </div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-right">
+          <div className="relative inline-block" ref={menuRef}>
+            <Button
+              size="sm"
+              onClick={toggleMenu}
+              className="p-2 hover:bg-primary-100 dark:hover:bg-primary-900"
+              aria-label="Opcje produktu"
+              aria-expanded={isMenuOpen}
+              aria-haspopup="true"
+            >
+              <BsThreeDots className="w-5 h-5" />
+            </Button>
+            {isMenuOpen && (
+              <div 
+                className="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[9999]"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+              >
+                <div className="py-1" role="none">
+                  <Link
+                    href={`/dashboard/products/${product.id}/edit`}
+                    className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
+                    role="menuitem"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Edytuj
+                  </Link>
+                  <button
+                    onClick={openDeleteModal}
+                    className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-center"
+                    role="menuitem"
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? 'Usuwanie...' : 'Usuń'}
+                  </button>
+                </div>
               </div>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-white dark:bg-gray-700 rounded-box w-32">
-                <li><Link href={`/dashboard/products/${id}/edit`} className="text-blue-700 dark:text-blue-300">Edytuj</Link></li>
-                <li><a onClick={() => setIsDeleteModalOpen(true)} className="text-red-700 dark:text-red-300">Usuń</a></li>
-              </ul>
-            </div>
+            )}
           </div>
         </td>
       </tr>
+
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[100]">
           <Modal
@@ -112,17 +169,24 @@ export const ProductCard = ({
             onClose={() => setIsDeleteModalOpen(false)}
             title="Usuń produkt"
             isDanger={true}
-            confirmText="Usuń"
-            onConfirm={handleDelete}
+            confirmText={isDeleting ? "Usuwanie..." : "Usuń"}
+            onConfirm={handleDeleteConfirm}
           >
-            <ProductContainer>
+            <div className="p-4">
+              {error && (
+                <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg" role="alert">
+                  {error}
+                </div>
+              )}
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Czy na pewno chcesz usunąć produkt &quot;{name}&quot;? Tej operacji nie można cofnąć.
+                Czy na pewno chcesz usunąć produkt &quot;{product.name}&quot;? Tej operacji nie można cofnąć.
               </p>
-            </ProductContainer>
+            </div>
           </Modal>
         </div>
       )}
     </>
   );
-}; 
+});
+
+ProductCard.displayName = 'ProductCard'; 

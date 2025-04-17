@@ -1,7 +1,7 @@
 'use client'
 
 import { SelectHTMLAttributes } from 'react'
-import { UseFormRegister } from 'react-hook-form'
+import { UseFormRegister, useFormContext } from 'react-hook-form'
 import { FormValues, FormOption } from '@/types/form'
 
 interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -22,6 +22,9 @@ export const FormSelect = ({
   className = '', 
   ...props 
 }: FormSelectProps) => {
+  const { watch } = useFormContext<FormValues>();
+  const value = watch(name);
+
   return (
     <div className="form-control">
       <label className="label">
@@ -32,7 +35,7 @@ export const FormSelect = ({
         className={`select select-bordered w-full focus:select-primary ${error ? 'select-error' : ''} ${className}`}
         {...props}
       >
-        <option value="">Wybierz opcję</option>
+        {!value && <option value="">Wybierz opcję</option>}
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

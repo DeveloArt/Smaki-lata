@@ -4,18 +4,19 @@ import { ProductStats } from '@/components/organisms/ProductStats'
 import { ProductStalls } from '@/components/organisms/ProductStalls'
 // import { Button } from '@/components/atoms/Button'
 import { InfoCard } from '@/components/atoms/InfoCard'
-import { getProduct } from '@/helpers/productHelpers'
+import { getProductById } from '@/api/productsOperations'
 import { SalesChart } from '@/components/organisms/SalesChart'
 import { getProductStalls } from '@/helpers/productStallsHelpers'
-import { ProductActions } from '@/components/molecules/ProductActions'
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id)
-  const productStalls = await getProductStalls(params.id)
+  const productId = params.id
+  const product = await getProductById(productId)
 
   if (!product) {
     return <div>Produkt nie znaleziony</div>
   }
+
+  const productStalls = await getProductStalls(productId)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -32,10 +33,9 @@ export default async function ProductPage({ params }: { params: { id: string } }
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <ProductBasicInfo 
-                    unit={product.unit}
                     productStalls={productStalls}
                   />
-                  <ProductStats unit={product.unit} />
+                  <ProductStats />
                   {/* <InfoCard title="Szybkie akcje">
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button className="flex-1 whitespace-nowrap justify-center">

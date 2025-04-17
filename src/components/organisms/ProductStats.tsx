@@ -1,20 +1,22 @@
+'use client'
+
 import { InfoCard } from '../atoms/InfoCard'
 import { ProductInfoRow } from '../molecules/ProductInfoRow'
 
-interface ProductStatsProps {
-  unit: string
-}
-
-export const ProductStats = ({ unit }: ProductStatsProps) => {
+export const ProductStats = () => {
   return (
     <InfoCard title="Statystyki">
       <ProductInfoRow 
-        label="Średnia sprzedaż dzienna" 
-        value={`5 ${unit}`} 
+        label="Sprzedaż dzienna" 
+        value="0" 
       />
       <ProductInfoRow 
-        label="Ostatnia aktualizacja" 
-        value="2 godziny temu" 
+        label="Sprzedaż tygodniowa" 
+        value="0" 
+      />
+      <ProductInfoRow 
+        label="Sprzedaż miesięczna" 
+        value="0" 
       />
     </InfoCard>
   )

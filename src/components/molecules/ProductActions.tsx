@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Modal } from '../atoms/Modal'
 import { ProductContainer } from '../atoms/ProductContainer'
+import { deleteProduct } from '@/api/productsOperations'
 
 interface ProductActionsProps {
   productId: string
@@ -14,6 +15,8 @@ interface ProductActionsProps {
 export const ProductActions = ({ productId, productName }: ProductActionsProps) => {
   const router = useRouter()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleEdit = () => {
     router.push(`/dashboard/products/${productId}/edit`)
@@ -23,9 +26,20 @@ export const ProductActions = ({ productId, productName }: ProductActionsProps) 
     setIsDeleteModalOpen(true)
   }
 
-  const handleDeleteConfirm = () => {
-    console.log('Deleting product:', productId)
-    setIsDeleteModalOpen(false)
+  const handleDeleteConfirm = async () => {
+    try {
+      setIsDeleting(true)
+      setError(null)
+      await deleteProduct(productId)
+      router.push('/dashboard/products')
+      router.refresh()
+    } catch (err) {
+      setError('Wystąpił błąd podczas usuwania produktu')
+      console.error('Błąd podczas usuwania produktu:', err)
+    } finally {
+      setIsDeleting(false)
+      setIsDeleteModalOpen(false)
+    }
   }
 
   return (
@@ -46,10 +60,15 @@ export const ProductActions = ({ productId, productName }: ProductActionsProps) 
             onClose={() => setIsDeleteModalOpen(false)}
             title="Usuń produkt"
             isDanger={true}
-            confirmText="Usuń"
+            confirmText={isDeleting ? "Usuwanie..." : "Usuń"}
             onConfirm={handleDeleteConfirm}
           >
             <ProductContainer>
+              {error && (
+                <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+                  {error}
+                </div>
+              )}
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Czy na pewno chcesz usunąć produkt &quot;{productName}&quot;? Tej operacji nie można cofnąć.
               </p>

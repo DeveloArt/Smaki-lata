@@ -1,26 +1,42 @@
-import React from "react";
+'use client'
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  variant?: "default" | "search";
+import { InputHTMLAttributes } from 'react'
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label: string
+  error?: string
+  className?: string
+  rightElement?: React.ReactNode
 }
 
-export const Input: React.FC<InputProps> = ({
-  variant = "default",
-  className = "",
-  ...props
-}) => {
-  const baseStyles =
-    "px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500";
-
-  const variantStyles = {
-    default: "",
-    search: "flex-1",
-  };
-
+export const Input = ({ 
+  label, 
+  error, 
+  className = '', 
+  rightElement,
+  ...props 
+}: InputProps) => {
   return (
-    <input
-      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
-      {...props}
-    />
-  );
-};
+    <div className="form-control">
+      <label className="label">
+        <span className="label-text font-semibold text-base">{label}</span>
+      </label>
+      <div className="join w-full">
+        <input
+          className={`join-item input input-bordered flex-1 focus:input-primary ${error ? 'input-error' : ''} ${className}`}
+          {...props}
+        />
+        {rightElement && (
+          <span className="join-item input input-bordered w-24">
+            {rightElement}
+          </span>
+        )}
+      </div>
+      {error && (
+        <label className="label">
+          <span className="label-text-alt text-error">{error}</span>
+        </label>
+      )}
+    </div>
+  )
+}

@@ -1,216 +1,332 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { Button } from '../atoms/Button'
 import { FormInput } from '../atoms/FormInput'
 import { FormSelect } from '../atoms/FormSelect'
+import { Input } from '../atoms/Input'
 import { FormTextarea } from '../atoms/FormTextarea'
-import { FormCheckboxGroup } from '../atoms/FormCheckboxGroup'
 import { FormValues, FormOption } from '@/types/form'
-import { useState } from 'react'
-import { Product, ProductStall } from '@/types/product'
+import { useState, useEffect } from 'react'
+import { Product } from '@/types/product'
 import { ProductContainer } from '../atoms/ProductContainer'
-
-const initialCategories: FormOption[] = [
-  { value: 'fruits', label: 'Owoce' },
-  { value: 'vegetables', label: 'Warzywa' },
-  { value: 'berries', label: 'Owoce jagodowe' },
-  { value: 'exotic', label: 'Owoce egzotyczne' },
-  { value: 'herbs', label: 'Zioła' },
-]
-
-const stalls: FormOption[] = [
-  { value: 'stall1', label: 'Stoisko owocowe' },
-  { value: 'stall2', label: 'Stoisko warzywne' },
-  { value: 'stall3', label: 'Stoisko ziołowe' },
-  { value: 'stall4', label: 'Stoisko egzotyczne' },
-  { value: 'stall5', label: 'Stoisko sezonowe' },
-]
-
-const units: FormOption[] = [
-  { value: 'kg', label: 'Kilogram' },
-  { value: 'g', label: 'Gram' },
-  { value: 'szt', label: 'Sztuka' },
-  { value: 'op', label: 'Opakowanie' },
-  { value: 'kratka', label: 'Kratka' },
-  { value: 'skrzynka', label: 'Skrzynka' },
-]
+import { createProduct, updateProduct } from '@/api/productsOperations'
+import { useRouter } from 'next/navigation'
+import { getAllCategories, createCategory } from '@/api/categoriesOperations'
+import { getAllUnits, createUnit } from '@/api/unitsOperations'
 
 interface ProductFormProps {
   product?: Product
-  productStalls?: ProductStall[]
   isEditMode?: boolean
 }
 
-export const ProductForm = ({ product, productStalls = [], isEditMode = false }: ProductFormProps) => {
-  const [categories, setCategories] = useState<FormOption[]>(initialCategories)
+export const ProductForm = ({ product, isEditMode = false }: ProductFormProps) => {
+  const router = useRouter()
+  const [categories, setCategories] = useState<FormOption[]>([])
+  const [units, setUnits] = useState<FormOption[]>([])
   const [newCategory, setNewCategory] = useState('')
+  const [newUnit, setNewUnit] = useState('')
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false)
+  const [showNewUnitInput, setShowNewUnitInput] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const methods = useForm<FormValues>({
+    defaultValues: {
+      name: product?.name || '',
+      category: product?.category || '',
+      unit: product?.unit || '',
+      description: product?.description || '',
+    },
+  })
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     setValue,
-  } = useForm<FormValues>({
-    defaultValues: {
-      name: product?.name || '',
-      category: product?.category || '',
-      description: product?.description || '',
-      unit: product?.unit || 'szt',
-      stalls: productStalls.map(stall => stall.stallId) || [],
-    },
-  })
+  } = methods
 
-  const handleAddCategory = () => {
-    if (newCategory.trim()) {
-      const newCategoryValue = newCategory.toLowerCase().replace(/\s+/g, '_')
-      const newCategoryOption = {
-        value: newCategoryValue,
-        label: newCategory.trim()
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesData, unitsData] = await Promise.all([
+          getAllCategories(),
+          getAllUnits()
+        ]);
+        
+        setCategories(categoriesData.map(cat => ({
+          value: cat.value,
+          label: cat.label
+        })));
+        
+        setUnits(unitsData.map(unit => ({
+          value: unit.value,
+          label: unit.label
+        })));
+
+        if (product) {
+          setValue('category', product.category);
+          setValue('unit', product.unit);
+        }
+      } catch (err) {
+        console.error('Błąd podczas pobierania danych:', err);
+        setError('Nie udało się załadować danych');
       }
-      
-      setCategories([...categories, newCategoryOption])
-      setValue('category', newCategoryValue)
-      setNewCategory('')
-      setShowNewCategoryInput(false)
+    };
+    
+    fetchData();
+  }, [product, setValue]);
+
+  const handleAddCategory = async () => {
+    if (newCategory.trim()) {
+      try {
+        const newCategoryValue = newCategory.toLowerCase().replace(/\s+/g, '_');
+        const newCategoryData = {
+          value: newCategoryValue,
+          label: newCategory.trim()
+        };
+        
+        const createdCategory = await createCategory(newCategoryData);
+        setCategories([...categories, { value: createdCategory.value, label: createdCategory.label }]);
+        setValue('category', createdCategory.value);
+    
+        setShowNewCategoryInput(false);
+        setNewCategory('');
+      } catch (err) {
+        console.error('Błąd podczas dodawania kategorii:', err);
+        setError('Nie udało się dodać nowej kategorii');
+      }
+    }
+  };
+
+  const handleAddUnit = async () => {
+    if (newUnit.trim()) {
+      try {
+        const newUnitValue = newUnit.toLowerCase().replace(/\s+/g, '_');
+        const newUnitData = {
+          value: newUnitValue,
+          label: newUnit.trim()
+        };
+        
+        const createdUnit = await createUnit(newUnitData);
+        setUnits([...units, { value: createdUnit.value, label: createdUnit.label }]);
+        setValue('unit', createdUnit.value);
+    
+        setShowNewUnitInput(false);
+        setNewUnit('');
+      } catch (err) {
+        console.error('Błąd podczas dodawania jednostki:', err);
+        setError('Nie udało się dodać nowej jednostki');
+      }
+    }
+  };
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      setIsSubmitting(true)
+      setError(null)
+
+      const productData = {
+        name: data.name,
+        category: data.category,
+        unit: data.unit,
+        description: data.description,
+      }
+
+      if (isEditMode && product) {
+        await updateProduct(product.id, productData)
+      } else {
+        await createProduct(productData)
+      }
+
+      router.push('/dashboard/products')
+      router.refresh()
+    } catch (err) {
+      setError('Wystąpił błąd podczas zapisywania produktu')
+      console.error('Błąd podczas zapisywania produktu:', err)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data)
-    reset()
-  }
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
-      <ProductContainer title={isEditMode ? 'Edytuj produkt' : 'Dodaj nowy produkt'}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <FormInput
-              label="Nazwa produktu"
-              error={errors.name?.message}
-              register={register}
-              name="name"
-              required
-              placeholder="Wprowadź nazwę produktu"
-            />
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Kategoria
-                </label>
-                {!showNewCategoryInput && (
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    type="button"
-                    onClick={() => setShowNewCategoryInput(true)}
-                    className="text-sm transition-all duration-300 ease-in-out hover:scale-105"
-                  >
-                    + Nowa kategoria
-                  </Button>
-                )}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ProductContainer title={isEditMode ? 'Edytuj produkt' : 'Dodaj nowy produkt'}>
+            {error && (
+              <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg border border-red-200">
+                <p className="text-sm font-medium">{error}</p>
               </div>
-              <FormSelect
-                label="Wybierz kategorię"
-                error={errors.category?.message}
-                register={register}
-                name="category"
-                options={categories}
-                required
-              />
-              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showNewCategoryInput ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
-                <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-3">
-                  <FormInput
-                    label="Nazwa nowej kategorii"
-                    register={register}
-                    name="newCategory"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="Wprowadź nazwę kategorii"
-                    className="mb-2"
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      type="button"
-                      onClick={() => {
-                        setShowNewCategoryInput(false)
-                        setNewCategory('')
-                      }}
-                      className="transition-all duration-300 ease-in-out hover:scale-105"
-                    >
-                      Anuluj
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      type="button"
-                      onClick={handleAddCategory}
-                      className="transition-all duration-300 ease-in-out hover:scale-105"
-                    >
-                      Dodaj kategorię
-                    </Button>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <FormInput
+                  label="Nazwa produktu"
+                  error={errors.name?.message}
+                  register={register}
+                  name="name"
+                  required
+                  placeholder="Wprowadź nazwę produktu"
+                />
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <FormTextarea
+                  label="Opis produktu"
+                  error={errors.description?.message}
+                  register={register}
+                  name="description"
+                  placeholder="Wprowadź opis produktu"
+                  rows={4}
+                />
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Kategoria
+                    </label>
+                    {!showNewCategoryInput && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => setShowNewCategoryInput(true)}
+                        className="text-sm"
+                      >
+                        + Nowa kategoria
+                      </Button>
+                    )}
                   </div>
+
+                  <FormSelect
+                    label="Wybierz kategorię"
+                    error={errors.category?.message}
+                    register={register}
+                    name="category"
+                    options={categories}
+                    required
+                  />
+
+                  {showNewCategoryInput && (
+                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-4">
+                      <Input
+                        label="Nazwa nowej kategorii"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        placeholder="Wprowadź nazwę kategorii"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          type="button"
+                          onClick={() => {
+                            setShowNewCategoryInput(false)
+                            setNewCategory('')
+                          }}
+                        >
+                          Anuluj
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          type="button"
+                          onClick={handleAddCategory}
+                        >
+                          Dodaj kategorię
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Jednostka miary
+                    </label>
+                    {!showNewUnitInput && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => setShowNewUnitInput(true)}
+                        className="text-sm"
+                      >
+                        + Nowa jednostka
+                      </Button>
+                    )}
+                  </div>
+
+                  <FormSelect
+                    label="Wybierz jednostkę"
+                    error={errors.unit?.message}
+                    register={register}
+                    name="unit"
+                    options={units}
+                    required
+                  />
+
+                  {showNewUnitInput && (
+                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-4">
+                      <Input
+                        label="Nazwa nowej jednostki"
+                        value={newUnit}
+                        onChange={(e) => setNewUnit(e.target.value)}
+                        placeholder="Wprowadź nazwę jednostki"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          type="button"
+                          onClick={() => {
+                            setShowNewUnitInput(false)
+                            setNewUnit('')
+                          }}
+                        >
+                          Anuluj
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          type="button"
+                          onClick={handleAddUnit}
+                        >
+                          Dodaj jednostkę
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            <FormSelect
-              label="Jednostka"
-              error={errors.unit?.message}
-              register={register}
-              name="unit"
-              options={units}
-              required
-            />
-          </div>
-
-          <div className="space-y-4">
-            <FormTextarea
-              label="Opis produktu"
-              error={errors.description?.message}
-              register={register}
-              name="description"
-              required
-              placeholder="Wprowadź opis produktu"
-              rows={4}
-            />
-
-            <div className="space-y-2">
-              <FormCheckboxGroup
-                label="Przypisz do stoisk"
-                register={register}
-                name="stalls"
-                options={stalls}
-                className="grid grid-cols-2 gap-2"
-              />
+            <div className="card-actions justify-end mt-8">
+              <Button
+                variant="danger"
+                onClick={() => router.push('/dashboard/products')}
+              >
+                Anuluj
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Zapisywanie...' : (isEditMode ? 'Zapisz zmiany' : 'Dodaj produkt')}
+              </Button>
             </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <Button
-            variant="danger"
-            type="button"
-            onClick={() => reset()}
-            className="transition-all duration-300 ease-in-out hover:scale-105"
-          >
-            Wyczyść formularz
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            className="transition-all duration-300 ease-in-out hover:scale-105"
-          >
-            {isEditMode ? 'Zapisz zmiany' : 'Dodaj produkt'}
-          </Button>
-        </div>
-      </ProductContainer>
-    </form>
+          </ProductContainer>
+        </form>
+      </FormProvider>
+    </div>
   )
 } 

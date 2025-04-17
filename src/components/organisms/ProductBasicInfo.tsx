@@ -1,16 +1,14 @@
+'use client'
+
 import { InfoCard } from '../atoms/InfoCard'
 import { ProductInfoRow } from '../molecules/ProductInfoRow'
+import { ProductStall } from '@/types/product'
 
 interface ProductBasicInfoProps {
-  unit: string
-  productStalls: {
-    stallId: string
-    price: number
-    quantity: number
-  }[]
+  productStalls: ProductStall[]
 }
 
-export const ProductBasicInfo = ({ unit, productStalls }: ProductBasicInfoProps) => {
+export const ProductBasicInfo = ({ productStalls }: ProductBasicInfoProps) => {
   return (
     <InfoCard title="Informacje podstawowe">
       {productStalls.map(stall => (
@@ -18,12 +16,12 @@ export const ProductBasicInfo = ({ unit, productStalls }: ProductBasicInfoProps)
           <div className="font-medium text-lg mb-2">Stoisko {stall.stallId.replace('stall', '')}</div>
           <ProductInfoRow 
             label="Cena jednostkowa" 
-            value={`${stall.price.toFixed(2)} zł/${unit}`} 
+            value={`${stall.price.toFixed(2)} zł`} 
             isPrice 
           />
           <ProductInfoRow 
             label="Dostępna ilość" 
-            value={`${stall.quantity} ${unit}`} 
+            value={`${stall.quantity}`} 
           />
           <ProductInfoRow 
             label="Wartość magazynowa" 
