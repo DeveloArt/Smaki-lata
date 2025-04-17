@@ -11,16 +11,16 @@ export const HomePage: React.FC = () => {
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const { data: dataCurrentUser } = useQuery(
     {
-      queryKey: ["user"],
+      queryKey: ['user'],
       queryFn: async () => await fetchUserData(currentUserId),
     },
     queryClientParams
   );
-  console.log("dataCurrentUser", dataCurrentUser);
+  console.log('dataCurrentUser', dataCurrentUser);
 
   useEffect(() => {
-    getCurrentUserUid().then((user) => {
-      if (typeof user === "string") {
+    getCurrentUserUid().then(user => {
+      if (typeof user === 'string') {
         console.log(user);
         setCurrentUserId(user);
       }
