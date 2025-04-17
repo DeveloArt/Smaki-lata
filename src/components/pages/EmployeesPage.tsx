@@ -3,38 +3,15 @@ import { Button } from '@/components/atoms/Button';
 import React, { useEffect, useState } from 'react';
 import { icons } from '@/assets/icons';
 import { SignUpForm } from '@/components/molecules/SignUpForm';
-import uuid from 'react-uuid';
 import { EmployeeType } from '@/helpers/schemas';
-import {
-  createNewEmployee,
-  deleteEmployeeById,
-  editEmployeeById,
-  getAllEmployees,
-} from '@/api/employeesOperapions';
+import { deleteEmployeeById, getAllEmployees } from '@/api/employeesOperapions';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryClientParams } from '@/helpers/queryClientParams';
 import { useRef } from 'react';
-// import { queryClient } from '@/helpers/queryClient';
 export const EmployeesPage: React.FC = () => {
   const [editingEmployee, setEditingEmployee] = useState<EmployeeType | null>(null);
-
   const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDialogElement>(null);
-
-  const onSubmit = async (data: EmployeeType) => {
-    const isEdit = !!editingEmployee;
-    const newEmployee = isEdit ? { ...editingEmployee, ...data } : { ...data, id: uuid() };
-
-    if (isEdit) {
-      await editEmployeeById(newEmployee, newEmployee.id);
-    } else {
-      await createNewEmployee(newEmployee as EmployeeType);
-    }
-
-    queryClient.invalidateQueries({ queryKey: ['employee'] });
-    setEditingEmployee(null); // 🧼 Очистити після сабміту
-    modalRef.current?.close();
-  };
 
   const { data: dataEmployees } = useQuery(
     {
@@ -50,8 +27,8 @@ export const EmployeesPage: React.FC = () => {
   const editEmployee = (id: string) => {
     const employee = dataEmployees?.find(emp => emp.id === id);
     if (employee) {
-      setEditingEmployee(employee); // встановлюємо поточного
-      modalRef.current?.showModal(); // відкриваємо модалку
+      setEditingEmployee(employee);
+      modalRef.current?.showModal();
     }
   };
 
@@ -82,10 +59,7 @@ export const EmployeesPage: React.FC = () => {
           size="lg"
           onClick={() => {
             setEditingEmployee(null);
-            const modal = document.getElementById('my_modal_2') as HTMLDialogElement;
-            if (modal) {
-              modal.showModal();
-            }
+            modalRef.current?.showModal();
           }}
         >
           <icons.add className="h-5 w-5" />
@@ -137,7 +111,11 @@ export const EmployeesPage: React.FC = () => {
 
       <dialog id="my_modal_2" className="modal" ref={modalRef}>
         <div className="modal-box">
-          <SignUpForm onSubmit={onSubmit} defaultValues={editingEmployee} />
+          <SignUpForm
+            key={editingEmployee?.id || 'new'}
+            defaultValues={editingEmployee}
+            modalRef={modalRef}
+          />
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
