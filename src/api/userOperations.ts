@@ -24,7 +24,6 @@ export const fetchUserData = async (userId: string) => {
   if (!userDoc.exists()) {
     throw new Error("User not found");
   }
-
   const userData = userDoc.data() as UserData;
   return userData;
 };
