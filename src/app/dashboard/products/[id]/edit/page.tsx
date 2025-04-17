@@ -1,7 +1,13 @@
 import { ProductForm } from '@/components/organisms/ProductForm'
 import { getProductById } from '@/api/productsOperations'
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
+interface PageParams {
+  params: {
+    id: string
+  }
+}
+
+export default async function EditProductPage({ params }: PageParams) {
   const productId = params.id
   const product = await getProductById(productId)
 
