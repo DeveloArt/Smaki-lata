@@ -25,7 +25,6 @@ export const fetchUserData = async (userId: string) => {
   const userData = userDoc.data() as UserType;
   return userData;
 };
-
 export const signInWithEmail = (
   email: string,
   password: string,
@@ -81,8 +80,8 @@ const checkForUser = () => {
   return new Promise((_, reject) => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user) => {
-        console.log('user :', user);    
+      user => {
+        console.log('user :', user);
         unsubscribe();
       },
       reject
