@@ -1,36 +1,26 @@
 import { firestore } from './firebaseConfig';
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from 'firebase/firestore';
 
 import { employeeSchema, EmployeeType } from '@/helpers/schemas';
-import { auth } from './firebaseConfig';
-import { sendSignInLinkToEmail } from 'firebase/auth';
+// import { auth } from './firebaseConfig';
+// import { sendSignInLinkToEmail } from 'firebase/auth';
 import { setDoc } from 'firebase/firestore';
 
 export const createNewEmployee = async (newEmployee: EmployeeType) => {
   try {
-    const redirectUrl = `${window.location.origin}/signup?email=${newEmployee.email}`;
-    const actionCodeSettings = {
-      url: redirectUrl,
-      handleCodeInApp: true,
-    };
+    // const redirectUrl = `${window.location.origin}/signup?email=${newEmployee.email}`;
+    // const actionCodeSettings = {
+    //   url: redirectUrl,
+    //   handleCodeInApp: true,
+    // };
     employeeSchema.parse(newEmployee);
     // await sendSignInLinkToEmail(auth, newEmployee.email, actionCodeSettings);
     console.log('Zaproszenie zostało wysłane.');
     const usersRef = doc(firestore, 'employees', newEmployee.id);
     await setDoc(usersRef, newEmployee);
-  } catch (error: any) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.error(`Błąd: ${errorCode} - ${errorMessage}`);
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
   }
 };
 
@@ -61,8 +51,8 @@ export const editEmployeeById = async (updateEmployee: EmployeeType, employeeId:
     employeeSchema.parse(updateEmployee);
     const usersDocRef = doc(firestore, 'employees', employeeId);
     await updateDoc(usersDocRef, updateEmployee);
-  } catch (err: any) {
-    throw new Error(`Failed to edit employee in database: ${err.message}`);
+  } catch (error) {
+    throw new Error(`Failed to edit employee in database: ${error}`);
   }
 };
 
@@ -70,7 +60,7 @@ export const deleteEmployeeById = async (employeeId: string) => {
   try {
     const usersDocRef = doc(firestore, 'employees', employeeId);
     await deleteDoc(usersDocRef);
-  } catch (err: any) {
-    throw new Error(`Failed to remove employee from database: ${err.message}`);
+  } catch (error) {
+    throw new Error(`Failed to remove employee from database: ${error}`);
   }
 };
