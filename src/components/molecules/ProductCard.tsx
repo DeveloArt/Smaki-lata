@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 import { Modal } from '../atoms/Modal';
 import { useState } from 'react';
+import { ProductContainer } from '../atoms/ProductContainer';
 
 interface ProductCardProps extends Product {
   productStalls?: {
@@ -114,9 +115,11 @@ export const ProductCard = ({
             confirmText="Usuń"
             onConfirm={handleDelete}
           >
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Czy na pewno chcesz usunąć produkt &quot;{name}&quot;? Tej operacji nie można cofnąć.
-            </p>
+            <ProductContainer>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Czy na pewno chcesz usunąć produkt &quot;{name}&quot;? Tej operacji nie można cofnąć.
+              </p>
+            </ProductContainer>
           </Modal>
         </div>
       )}

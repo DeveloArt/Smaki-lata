@@ -1,9 +1,10 @@
 export interface FormValues {
   name: string
   category: string
+  price: number
   description: string
   stalls: string[]
-  unit: string
+  unit?: string
   newCategory?: string
 }
 

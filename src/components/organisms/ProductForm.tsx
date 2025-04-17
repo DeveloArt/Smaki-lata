@@ -9,6 +9,7 @@ import { FormCheckboxGroup } from '../atoms/FormCheckboxGroup'
 import { FormValues, FormOption } from '@/types/form'
 import { useState } from 'react'
 import { Product, ProductStall } from '@/types/product'
+import { ProductContainer } from '../atoms/ProductContainer'
 
 const initialCategories: FormOption[] = [
   { value: 'fruits', label: 'Owoce' },
@@ -84,11 +85,7 @@ export const ProductForm = ({ product, productStalls = [], isEditMode = false }:
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          {isEditMode ? 'Edytuj produkt' : 'Dodaj nowy produkt'}
-        </h2>
-        
+      <ProductContainer title={isEditMode ? 'Edytuj produkt' : 'Dodaj nowy produkt'}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <FormInput
@@ -213,7 +210,7 @@ export const ProductForm = ({ product, productStalls = [], isEditMode = false }:
             {isEditMode ? 'Zapisz zmiany' : 'Dodaj produkt'}
           </Button>
         </div>
-      </div>
+      </ProductContainer>
     </form>
   )
 } 

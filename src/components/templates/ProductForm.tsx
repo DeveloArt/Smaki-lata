@@ -1,11 +1,11 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import { Button } from '../atoms/Button'
-import { FormInput } from '../atoms/FormInput'
-import { FormSelect } from '../atoms/FormSelect'
-import { FormTextarea } from '../atoms/FormTextarea'
-import { FormCheckboxGroup } from '../atoms/FormCheckboxGroup'
+import { Button } from '@/components/atoms/Button'
+import { FormInput } from '@/components/atoms/FormInput'
+import { FormSelect } from '@/components/atoms/FormSelect'
+import { FormTextarea } from '@/components/atoms/FormTextarea'
+import { FormCheckboxGroup } from '@/components/atoms/FormCheckboxGroup'
 import { FormValues, FormOption } from '@/types/form'
 
 const categories: FormOption[] = [

@@ -7,6 +7,7 @@ import { InfoCard } from '@/components/atoms/InfoCard'
 import { getProduct } from '@/helpers/productHelpers'
 import { SalesChart } from '@/components/organisms/SalesChart'
 import { getProductStalls } from '@/helpers/productStallsHelpers'
+import { ProductActions } from '@/components/molecules/ProductActions'
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id)
@@ -20,7 +21,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <ProductHeader />
+          <ProductHeader productId={product.id} productName={product.name} />
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-gray-800 dark:to-gray-700 p-6">
