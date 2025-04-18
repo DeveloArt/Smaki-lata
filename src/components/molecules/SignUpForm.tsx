@@ -3,7 +3,7 @@ import { REGEX_EMAIL } from '../../constants/REGEX';
 import { Button } from '../atoms/Button';
 import { Input } from '../atoms/Input';
 import { EmployeeType } from '@/helpers/schemas';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { createNewEmployee } from '@/api/employeesOperapions';
 import { editEmployeeById } from '@/api/employeesOperapions';
 import uuid from 'react-uuid';
