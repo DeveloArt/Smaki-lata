@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'login' | 'register' | 'logout' | 'add';
+  variant?: 'login' | 'register' | 'logout' | 'add' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -20,6 +20,8 @@ export const Button: React.FC<ButtonProps> = ({
     register: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
     logout: 'bg-red-600 text-white hover:bg-red-700',
     add: 'flex bg-[#1A77F2] text-white hover:bg-[#005fd8] hover:border-[#005fd8]',
+    danger: 'bg-red-500 text-white hover:bg-red-600 border border-red-600',
+    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
   };
 
   const sizeStyles = {
