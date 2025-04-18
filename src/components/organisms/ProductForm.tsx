@@ -2,9 +2,9 @@
 
 import { useForm, FormProvider } from 'react-hook-form';
 import { Button } from '../atoms/Button';
-import { FormInput } from '../atoms/FormInput';
-import { FormSelect } from '../atoms/FormSelect';
-import { FormTextarea } from '../atoms/FormTextarea';
+import { FormInput } from '../molecules/FormInput';
+import { FormSelect } from '../molecules/FormSelect';
+import { FormTextarea } from '../molecules/FormTextarea';
 import { FormValues, FormOption } from '@/types/form';
 import { useState, useEffect } from 'react';
 import { Product } from '@/types/product';
