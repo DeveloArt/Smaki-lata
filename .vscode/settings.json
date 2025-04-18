@@ -1,0 +1,36 @@
+{
+  "files.associations": {
+    "*.tsx": "typescriptreact",
+    "*.ts": "typescript",
+    "*.scss": "scss"
+  },
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          "source.tsx",
+          "source.ts",
+          "source.js",
+          "source.jsx",
+          "source.scss",
+          "source.css"
+        ],
+        "settings": {
+          "foreground": "#ffffff"
+        }
+      }
+    ]
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "eslint.autoFixOnSave": true,
+  "prettier.requireConfig": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[scss]": {
+    "editor.formatOnSave": true
+  },
+  "scss.validate": true
+}
